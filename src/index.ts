@@ -1,7 +1,9 @@
-import ProductPreview from './components/ProductPreview';
+// import ProductRender from "./components/ProductRender";
 
-const arr = new ProductPreview('5', 'dqdq', 2, 1, 3, 4, 'hghghgh');
+// new ProductRender().getRenderProd()
 
-arr.generatePreview();
+import './index.css'
+import App from './pages/app/index';
 
-console.log(arr);
+const app = new App();
+app.run();
