@@ -1,3 +1,10 @@
+body{
+    //background-color: #181a1c;
+     display: flex;
+     gap: 20px;
+     flex-wrap: wrap;
+ }
+
 .block-prev{
     width: 30%;
     background-color: #634327f2;
@@ -42,15 +49,9 @@
     cursor: pointer;
     color: aliceblue;
 }
-#current-page{
-    width: 100%;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
 
-body{
-   //background-color: #181a1c;
+.product-list {
+    width: 100%;
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
