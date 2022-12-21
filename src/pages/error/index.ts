@@ -12,7 +12,7 @@ class ErrorPage extends Page {
   };
 
   constructor(id: string, errorType: ErrorTypes | string) {
-    super(id);
+    super();
     this.errorType = errorType;
   }
 

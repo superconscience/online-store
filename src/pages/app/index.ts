@@ -6,17 +6,20 @@ import { data } from '../../data';
 import { Product } from '../../types';
 import { queryHelper } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
+import CartPage from '../cart';
 
 export const enum PageIds {
   MainPage = 'main-page',
-  SettingsPage = 'settings-page',
-  StatisticsPage = 'statistics-page',
+  CartPage = 'cart-page',
+  ErrorPage = 'error-page',
 }
 
 class App {
   private static container: HTMLElement = document.body;
   private static defaultPageId = 'current-page';
-  $header: Header;
+  static pageId: PageIds;
+  $header: HTMLElement;
+  $main: HTMLElement;
   private static data = { ...data };
 
   static getData() {
@@ -40,15 +43,24 @@ class App {
 
     const regExp = (id: string) => new RegExp(`^${id}.*`);
     if (regExp(PageIds.MainPage).test(pageId)) {
-      page = new MainPage(pageId);
+      page = new MainPage();
+      App.pageId = PageIds.MainPage;
+    } else if (regExp(PageIds.CartPage).test(pageId)) {
+      page = new CartPage();
+      App.pageId = PageIds.CartPage;
     } else {
-      page = new ErrorPage(pageId, ErrorTypes.Error_404);
+      page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
+      App.pageId = PageIds.ErrorPage;
     }
 
     if (page) {
       const pageHTML = page.render();
-      pageHTML.id = App.defaultPageId;
-      App.container.append(pageHTML);
+      const main = App.container.querySelector('main');
+      if (!main) {
+        return;
+      }
+      main.innerHTML = '';
+      main.append(pageHTML);
     }
   }
 
@@ -61,11 +73,14 @@ class App {
   }
 
   constructor() {
-    this.$header = new Header('header', 'header-container');
+    this.$header = new Header('header', 'header').render();
+    const main = document.createElement('main');
+    main.className = 'main';
+    this.$main = main;
   }
 
   run() {
-    App.container.append(this.$header.render());
+    App.container.append(this.$header, this.$main);
     App.renderNewPage('main-page');
     this.enableRouteChange();
   }

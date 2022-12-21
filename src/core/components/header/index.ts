@@ -7,12 +7,8 @@ const Buttons = [
     text: 'Main Page',
   },
   {
-    id: PageIds.SettingsPage,
-    text: 'Settings Page',
-  },
-  {
-    id: PageIds.StatisticsPage,
-    text: 'Statistics Page',
+    id: PageIds.CartPage,
+    text: 'Cart Page',
   },
 ];
 

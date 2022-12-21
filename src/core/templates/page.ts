@@ -1,10 +1,12 @@
 abstract class Page {
-  protected container: HTMLElement;
+  protected container: DocumentFragment;
   static TextObject = {};
 
-  constructor(id: string) {
-    this.container = document.createElement('div');
-    this.container.id = id;
+  constructor() {
+    // this.container = document.createElement('div');
+    // this.container.id = id;
+    // console.log(id);
+    this.container = document.createDocumentFragment();
   }
 
   protected createHeaderTitle(text: string) {

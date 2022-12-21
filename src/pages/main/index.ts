@@ -6,15 +6,18 @@ class MainPage extends Page {
   static TextObject = {
     MainTitle: 'Main Page',
   };
-  $sidebar = new Sidebar();
-  $productList = new ProductList();
+  $sidebar = new Sidebar().render();
+  $productList = new ProductList().render();
 
-  constructor(id: string) {
-    super(id);
+  constructor() {
+    super();
   }
 
   render() {
-    this.container.append(this.$sidebar.render(), this.$productList.render());
+    const store = document.createElement('div');
+    store.className = 'store';
+    store.append(this.$sidebar, this.$productList);
+    this.container.append(store);
     return this.container;
   }
 }

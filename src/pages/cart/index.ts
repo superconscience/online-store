@@ -1,8 +1,8 @@
-import Page from '../../templates/page';
+import Page from '../../core/templates/page';
 
 class CartPage extends Page {
-  constructor(id: string) {
-    super(id);
+  constructor() {
+    super();
   }
 
   render() {

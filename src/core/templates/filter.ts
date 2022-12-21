@@ -8,7 +8,7 @@ export type CheckboxedFilterType = Extract<ProuductKey, 'category' | 'brand'>;
 export type RangedFilterType = Extract<ProuductKey, 'price' | 'stock'>;
 
 export type CheckboxedItems = Record<string, { total: number; actual: number }>;
-export type RangedItems = { min: number; max: number };
+export type RangedItems = { defaultMin: number; defaultMax: number; min: number; max: number };
 
 abstract class Filter<FT extends FilterType> extends Component {
   protected readonly filterType: FT;
