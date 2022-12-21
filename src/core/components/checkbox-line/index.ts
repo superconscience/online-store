@@ -15,6 +15,7 @@ class CheckboxLine extends Component {
     checkboxLine: checkBoxLineClassName,
     input: `${checkBoxLineClassName}__input`,
     label: `${checkBoxLineClassName}__label`,
+    info: `${checkBoxLineClassName}__info`,
   };
 
   constructor(filterType: CheckboxedFilterType, filterName: string, total: number, available = total) {
@@ -31,14 +32,17 @@ class CheckboxLine extends Component {
     const fragment = document.createDocumentFragment();
     const checkbox = document.createElement('input');
     const label = document.createElement('label');
+    const info = document.createElement('span');
     checkbox.type = 'checkbox';
     checkbox.id = this.title;
     checkbox.className = CheckboxLine.classes.input;
     checkbox.checked = query.get(this.filterType)?.split(QUERY_VALUE_SEPARATOR).includes(this.filterName) || false;
     label.setAttribute('for', this.title);
     label.className = CheckboxLine.classes.label;
-    label.textContent = `${this.title} (${this.available}/${this.total})`;
-    fragment.append(checkbox, label);
+    label.textContent = `${this.title}`;
+    info.className = CheckboxLine.classes.info;
+    info.textContent = `(${this.available}/${this.total})`;
+    fragment.append(checkbox, label, info);
     return fragment;
   }
 

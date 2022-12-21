@@ -58,6 +58,8 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
     Object.entries(this.items).forEach(([filterName, { total, actual }]) => {
       const checkboxLineComponent = new CheckboxLine(this.filterType, filterName, total, actual);
       const checkboxLine = checkboxLineComponent.render();
+      checkboxLine.classList.toggle('item-not-active', actual === 0);
+      checkboxLine.classList.toggle('item-active', actual !== 0);
       this.checkboxLineComponentList.push(checkboxLineComponent);
       this.checkboxLineList.push(checkboxLine);
       list.append(checkboxLine);
