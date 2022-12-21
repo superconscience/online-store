@@ -1,58 +1,8 @@
-body{
-    //background-color: #181a1c;
-     display: flex;
-     gap: 20px;
-     flex-wrap: wrap;
- }
-
-.block-prev{
-    width: 30%;
-    background-color: #634327f2;
-    border-radius: 0 0 0.4rem;
-    border-bottom: 1px solid orange;
-    border-right: 1px solid orange;
-    padding: 1%;
-    opacity: 0.9;
-}
-
-.prev{
-    margin: 0;
-    font-size: .9rem;
-    color: #bb954e;
-}
-.prev-value{
-    color: aliceblue;
-}
-.block-general{
-    border: 1px solid orange;
-    border-radius: 0.5rem;
-    width: 23%;
-}
-.title-preview{
-    margin: 0;
-    display: block;
-    color: aliceblue;
-    background-color: black;
-    text-align: center;
-    border-radius: 0.5rem;
-}
-.btn-preview{
-    margin: 32% 0% 6% 6%;
-    width: 130px;
-    height: 30px;
-    background-color: #181a1c;
-    border: 1px solid orange;
-    border-radius: 0.3rem;
-    padding-left: 2%;
-    padding-right: 2%;
-    font-size: 80%;
-    cursor: pointer;
-    color: aliceblue;
-}
-
-.product-list {
-    width: 100%;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
+@import 'https://fonts.googleapis.com/css2?family=Philosopher&display=swap';
+@import './base';
+@import './header';
+@import './filters';
+@import './product-list';
+@import './buttons';
+@import './dual-slider';
+@import './checkbox-line';

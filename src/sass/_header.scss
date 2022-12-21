@@ -1,0 +1,14 @@
+.header {
+  height: 10vh;
+  width: 100%;
+  background-color: #181a1c;
+  color: orange;
+  border-bottom: 2px solid orange;
+  border-radius: 0 0 1.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  padding-left: 2%;
+  padding-right: 2%;
+  overflow: hidden;
+  justify-content: space-between;
+}

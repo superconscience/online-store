@@ -1,0 +1,32 @@
+
+.categories,
+.brands {
+  border: 1px solid orange;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 5%;
+  display: block;
+}
+
+.category-filter__list,
+.brand-filter__list {
+  height: 10rem;
+  overflow: hidden;
+  overflow-y: auto;
+  background: rgba(76, 74, 65, 0.4);
+  padding: 2%;
+}
+
+.filter-header {
+  text-align: center;
+  background-color: #181a1c;
+  border-bottom: 1px solid orange;
+}
+
+.reset-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 2%;
+  color: wheat;
+}
