@@ -1,3 +1,4 @@
+import App, { PageIds } from '../pages/app';
 import { QUERY_VALUE_SEPARATOR } from './constants';
 import { Query } from './types';
 
@@ -48,21 +49,9 @@ export const queryHelper = () => {
     entries: () => query.entries(),
 
     toString: () => query.toString().replace(/%E2%86%95/g, QUERY_VALUE_SEPARATOR),
-  };
 
-  // helper.toString = () => {
-  //   console.log([...query.keys()]);
-  //   return [
-  //     helper.get('category'),
-  //     helper.get('brand'),
-  //     helper.get('price'),
-  //     helper.get('stock'),
-  //     helper.get('sort'),
-  //     helper.get('search'),
-  //   ]
-  //     .filter(Boolean)
-  //     .join('&');
-  // };
+    apply: (pageId?: PageIds) => (window.location.href = `#${pageId ? pageId : App.pageId}?${query.toString()}`),
+  };
 
   return helper;
 };
