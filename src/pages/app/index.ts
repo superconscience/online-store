@@ -94,7 +94,7 @@ class App {
     const sort = query.get('sort');
     const search = query.get('search');
 
-    let products = data.products;
+    let products = [...data.products];
 
     if (category !== null) {
       products = products.filter((p) =>

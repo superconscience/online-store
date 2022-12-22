@@ -1,4 +1,4 @@
-import ProductList from '../../core/components/product-list';
+import Products from '../../core/components/products';
 import Sidebar from '../../core/components/sidebar';
 import Page from '../../core/templates/page';
 
@@ -7,7 +7,7 @@ class MainPage extends Page {
     MainTitle: 'Main Page',
   };
   $sidebar = new Sidebar().render();
-  $productList = new ProductList().render();
+  $products = new Products().render();
 
   constructor() {
     super();
@@ -16,7 +16,7 @@ class MainPage extends Page {
   render() {
     const store = document.createElement('div');
     store.className = 'store';
-    store.append(this.$sidebar, this.$productList);
+    store.append(this.$sidebar, this.$products);
     this.container.append(store);
     return this.container;
   }

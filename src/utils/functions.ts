@@ -1,12 +1,10 @@
 import App, { PageIds } from '../pages/app';
 import { QUERY_VALUE_SEPARATOR } from './constants';
-import { Query } from './types';
+import { QueryKey } from './types';
 
 export const locationQuery = (parts = window.location.href.split('?')) => (parts.length > 1 ? parts.pop() : '');
 
 export const queryHelper = () => {
-  type QueryKey = keyof Query;
-
   const query = new URLSearchParams(locationQuery());
   const helper = {
     get: (key: QueryKey) => query.get(key),
@@ -44,6 +42,11 @@ export const queryHelper = () => {
           query.delete(key);
         }
       }
+    },
+
+    removeFilters: () => {
+      const keys: QueryKey[] = ['category', 'brand', 'price', 'stock', 'sort', 'search'];
+      keys.forEach((k) => query.delete(k));
     },
 
     entries: () => query.entries(),
