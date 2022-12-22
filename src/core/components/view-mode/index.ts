@@ -31,10 +31,10 @@ class ViewMode extends Component {
     $dotBig.className = `${ViewMode.classes.dot} ${ViewMode.classes.dot}_big`;
     $dotSmall.className = `${ViewMode.classes.dot} ${ViewMode.classes.dot}_small`;
 
-    if (query.get('big') === 'true') {
-      $big.classList.add(ViewMode.classes.active);
-    } else {
+    if (query.get('big') === 'false') {
       $small.classList.add(ViewMode.classes.active);
+    } else {
+      $big.classList.add(ViewMode.classes.active);
     }
 
     $dotBig.textContent = '.';

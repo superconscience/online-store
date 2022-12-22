@@ -27,7 +27,7 @@ class Products extends Component {
 
   build() {
     const actualProducts = App.getProducts();
-    const isBig = queryHelper().get('big') === 'true';
+    const isSmall = queryHelper().get('big') === 'false';
 
     const $fragment = document.createDocumentFragment();
     const $productList = document.createElement('div');
@@ -35,7 +35,7 @@ class Products extends Component {
     const $stat = document.createElement('div');
 
     $productList.className = Products.classes.productList;
-    $productList.classList.toggle('big', isBig);
+    $productList.classList.toggle('big', !isSmall);
     $header.className = Products.classes.header;
     $stat.className = Products.classes.stat;
 
