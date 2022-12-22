@@ -7,6 +7,7 @@ import { Product } from '../../types';
 import { queryHelper } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
 import CartPage from '../cart';
+import SearchBar from '../../core/components/search-bar';
 
 export const enum PageIds {
   MainPage = 'main-page',
@@ -20,6 +21,7 @@ class App {
   static pageId: PageIds;
   $header: HTMLElement;
   $main: HTMLElement;
+  static $focused: HTMLInputElement | null = null;
   private static data = { ...data };
 
   static getData() {
@@ -54,6 +56,7 @@ class App {
     }
 
     if (page) {
+      const $focused = document.querySelector(':focus');
       const pageHTML = page.render();
       const main = App.container.querySelector('main');
       if (!main) {
@@ -61,15 +64,20 @@ class App {
       }
       main.innerHTML = '';
       main.append(pageHTML);
+      if ($focused instanceof HTMLInputElement && $focused.type === 'search') {
+        SearchBar.$input.focus();
+      }
     }
   }
 
   private enableRouteChange() {
-    window.addEventListener('hashchange', () => {
+    const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
       this.query();
       App.renderNewPage(hash);
-    });
+    };
+    window.addEventListener('hashchange', routeChangeHandler);
+    window.addEventListener('load', routeChangeHandler);
   }
 
   constructor() {
