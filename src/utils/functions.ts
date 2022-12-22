@@ -9,7 +9,13 @@ export const queryHelper = () => {
   const helper = {
     get: (key: QueryKey) => query.get(key),
 
-    set: (key: QueryKey, value: string) => query.set(key, value),
+    set: (key: QueryKey, value: string) => {
+      if (value !== '') {
+        query.set(key, value);
+      } else {
+        query.delete(key);
+      }
+    },
 
     has: (key: QueryKey) => query.has(key),
 
