@@ -22,6 +22,7 @@ class ProductPreview extends Component {
     buttonAddCard.className = 'btn-preview';
     buttonDeteils.className = 'btn-preview';
     blockButtons.className = 'block-buttons';
+    buttonAddCard.setAttribute('data-id', String(this.product.id));
     // blockGeneral.className = 'block-general';
     title.className = 'title-preview';
     // blockGeneral.style.backgroundImage = `url('${this.product.images[0]}')`;

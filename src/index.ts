@@ -1,7 +1,4 @@
-// import ProductRender from "./components/ProductRender";
-
-// new ProductRender().getRenderProd()
-
+import Products from './core/components/products';
 import './index.css';
 import App from './pages/app/index';
 
