@@ -66,9 +66,9 @@ export const queryHelper = () => {
 };
 
 export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 20) {
-  let h = 0;
+  let h: number | NodeJS.Timeout = 0;
   const callable = (...args: unknown[]) => {
-    clearTimeout(h);
+    clearTimeout(h as NodeJS.Timeout);
     h = setTimeout(() => cb(...args), wait);
   };
   return <T>(<unknown>callable);
