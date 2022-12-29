@@ -1,35 +1,34 @@
 import Component from '../../templates/components';
 import { PageIds } from '../../../pages/app/index';
 
-const Buttons = [
-  {
-    id: PageIds.MainPage,
-    text: 'Main Page',
-  },
-  {
-    id: PageIds.CartPage,
-    text: 'Cart Page',
-  },
-];
-
 class Header extends Component {
   constructor(tagName: string, className: string) {
     super(tagName, className);
   }
 
-  renderPageButtons() {
-    const pageButtons = document.createElement('div');
-    Buttons.forEach((button) => {
-      const buttonHTML = document.createElement('a');
-      buttonHTML.href = `#${button.id}`;
-      buttonHTML.innerText = button.text;
-      pageButtons.append(buttonHTML);
-    });
-    this.container.append(pageButtons);
+  build() {
+    const $fragment = document.createDocumentFragment();
+    const $brand = document.createElement('a');
+    const $totalPrice = document.createElement('div');
+    const $cart = document.createElement('a');
+
+    $brand.className = 'brand';
+    $brand.href = `/#${PageIds.MainPage}`;
+    $brand.innerHTML = `<div class="logo">🛍</div><h2 class="brand-name">Online Store</h2>`;
+
+    $totalPrice.className = 'total-price';
+    $totalPrice.innerHTML = `<span>Cart total: 0</span>`;
+
+    $cart.className = 'header-cart';
+    $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">0</div></div>`;
+
+    $fragment.append($brand, $totalPrice, $cart);
+
+    return $fragment;
   }
 
   render() {
-    this.renderPageButtons();
+    this.container.append(this.build());
     return this.container;
   }
 }

@@ -7,6 +7,8 @@ import { Product } from '../../types';
 import { queryHelper } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
 import CartPage from '../cart';
+import SearchBar from '../../core/components/search-bar';
+import Footer from '../../core/components/footer';
 
 export const enum PageIds {
   MainPage = 'main-page',
@@ -20,6 +22,8 @@ class App {
   static pageId: PageIds;
   $header: HTMLElement;
   $main: HTMLElement;
+  $footer: HTMLElement;
+  static $focused: HTMLInputElement | null = null;
   private static data = { ...data };
 
   static getData() {
@@ -40,7 +44,9 @@ class App {
       currentPageHTML.remove();
     }
     let page: Page | null = null;
-
+    if (!pageId) {
+      pageId = PageIds.MainPage;
+    }
     const regExp = (id: string) => new RegExp(`^${id}.*`);
     if (regExp(PageIds.MainPage).test(pageId)) {
       page = new MainPage();
@@ -54,6 +60,7 @@ class App {
     }
 
     if (page) {
+      const $focused = document.querySelector(':focus');
       const pageHTML = page.render();
       const main = App.container.querySelector('main');
       if (!main) {
@@ -61,26 +68,32 @@ class App {
       }
       main.innerHTML = '';
       main.append(pageHTML);
+      if ($focused instanceof HTMLInputElement && $focused.type === 'search') {
+        SearchBar.$input.focus();
+      }
     }
   }
 
   private enableRouteChange() {
-    window.addEventListener('hashchange', () => {
+    const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
       this.query();
       App.renderNewPage(hash);
-    });
+    };
+    window.addEventListener('hashchange', routeChangeHandler);
+    window.addEventListener('load', routeChangeHandler);
   }
 
   constructor() {
     this.$header = new Header('header', 'header').render();
+    this.$footer = new Footer().render();
     const main = document.createElement('main');
     main.className = 'main';
     this.$main = main;
   }
 
   run() {
-    App.container.append(this.$header, this.$main);
+    App.container.append(this.$header, this.$main, this.$footer);
     App.renderNewPage('main-page');
     this.enableRouteChange();
   }

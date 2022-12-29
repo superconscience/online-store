@@ -1,4 +1,4 @@
-import { queryHelper } from '../../../utils/functions';
+import { debounce, queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 import Products from '../products';
 
@@ -9,6 +9,8 @@ class SearchBar extends Component {
     searchBar: searchBarClassName,
     input: `${searchBarClassName}__input`,
   };
+  static $input: HTMLInputElement;
+
   constructor() {
     super('div', `${Products.classes.searchBar} ${SearchBar.classes.searchBar}`);
   }
@@ -16,6 +18,7 @@ class SearchBar extends Component {
   build() {
     const currentValue = queryHelper().get('search');
     const $input = document.createElement('input');
+    SearchBar.$input = $input;
 
     $input.className = SearchBar.classes.input;
     $input.type = 'search';
@@ -24,12 +27,15 @@ class SearchBar extends Component {
       $input.value = currentValue;
     }
 
-    $input.addEventListener('input', () => {
+    const inputHandler = () => {
+      console.log('input');
       const value = $input.value.trim();
       const query = queryHelper();
       query.set('search', value);
       query.apply();
-    });
+    };
+
+    $input.addEventListener('input', debounce(inputHandler, 300));
 
     return $input;
   }
