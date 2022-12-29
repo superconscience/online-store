@@ -53,11 +53,11 @@ class CartProductItem extends Component {
     numberControl.append(blockButtons);
     numberControl.append(amountControl);
     blockCardInfo.innerHTML = template;
-    blockCart.append(itemI);
-    blockCart.append(blockCardInfo);
-    blockCart.append(numberControl);
-    blockCaritem.append(blockCart);
-    return blockCaritem;
+    blockCaritem.append(itemI);
+    blockCaritem.append(blockCardInfo);
+    blockCaritem.append(numberControl);
+    blockCart.append(blockCaritem);
+    return blockCart;
   }
   render() {
     this.container.append(this.generateCartProd());
