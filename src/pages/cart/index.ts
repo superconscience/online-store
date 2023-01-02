@@ -2,6 +2,9 @@ import Page from '../../core/templates/page';
 import Carts from '../../core/components/carts';
 import ModalItem from '../../core/components/modal';
 class CartPage extends Page {
+  static TextObject = {
+    MainTitle: 'cart-page',
+  };
   $carts = new Carts().render();
   $modal = new ModalItem().render();
   constructor() {

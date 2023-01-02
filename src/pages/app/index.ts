@@ -7,12 +7,14 @@ import { Product } from '../../types';
 import { queryHelper } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
 import CartPage from '../cart';
+import DetailsPage from '../details';
 import SearchBar from '../../core/components/search-bar';
 import Footer from '../../core/components/footer';
 
 export const enum PageIds {
   MainPage = 'main-page',
   CartPage = 'cart-page',
+  DetailsPage = 'details-page',
   ErrorPage = 'error-page',
 }
 
@@ -54,6 +56,9 @@ class App {
     } else if (regExp(PageIds.CartPage).test(pageId)) {
       page = new CartPage();
       App.pageId = PageIds.CartPage;
+    } else if (regExp(PageIds.DetailsPage).test(pageId)) {
+      page = new DetailsPage();
+      App.pageId = PageIds.DetailsPage;
     } else {
       page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
       App.pageId = PageIds.ErrorPage;

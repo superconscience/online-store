@@ -1,5 +1,6 @@
 import Component from '../../templates/components';
 import { PageIds } from '../../../pages/app/index';
+import Products from '../products';
 
 class Header extends Component {
   constructor(tagName: string, className: string) {
@@ -20,6 +21,7 @@ class Header extends Component {
     $totalPrice.innerHTML = `<span>Cart total: 0</span>`;
 
     $cart.className = 'header-cart';
+    $cart.href = `/#${PageIds.CartPage}`;
     $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">0</div></div>`;
 
     $fragment.append($brand, $totalPrice, $cart);

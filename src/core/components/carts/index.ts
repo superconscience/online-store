@@ -8,7 +8,6 @@ class Carts extends Component {
   static readonly classes = {
     cartList: 'cart-list',
   };
-
   constructor() {
     super('div', cartsClassName);
   }
