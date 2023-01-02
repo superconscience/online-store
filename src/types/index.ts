@@ -11,3 +11,9 @@ export interface Product {
   thumbnail: string;
   images: string[];
 }
+
+export interface Order {
+  quantity: number;
+}
+
+export type Orders = Record<string, Order>;

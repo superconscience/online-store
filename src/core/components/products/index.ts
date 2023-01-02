@@ -7,12 +7,15 @@ import SortBar from '../sort-bar';
 import ViewMode from '../view-mode';
 import { Product } from '../../../types';
 import { data } from '../../../data';
+import { productsMap } from '../../../products-map';
+import Header from '../header';
 const productsClassName = 'products';
 
 class Products extends Component {
   $sortBar = new SortBar().render();
   $searchBar = new SearchBar().render();
   $viewMode = new ViewMode().render();
+  private $products: Record<string, HTMLElement> = {};
   private static data = { ...data };
   static readonly classes = {
     productList: 'product-list',
@@ -41,7 +44,7 @@ class Products extends Component {
     const actualProducts = App.getProducts();
     const isSmall = queryHelper().get('big') === 'false';
     const $fragment = document.createDocumentFragment();
-    const $productList = document.createElement('div');
+    const $productList = document.createElement('ul');
     const $header = document.createElement('div');
     const $stat = document.createElement('div');
 
@@ -56,7 +59,11 @@ class Products extends Component {
     $fragment.append($header);
 
     if (actualProducts.length > 0) {
-      actualProducts.forEach((p) => $productList.append(new ProductPreview(p).render()));
+      actualProducts.forEach((p) => {
+        const $preview = new ProductPreview(p).render();
+        $productList.append($preview);
+        this.$products[p.id] = $preview;
+      });
       $fragment.append($productList);
     } else {
       const $notFound = document.createElement('div');
@@ -64,30 +71,38 @@ class Products extends Component {
       $notFound.textContent = 'No products found 😏';
       $fragment.append($notFound);
     }
-    $productList.addEventListener('click', function (event) {
-      const arrCart = Products.getOrder();
-      const target = event.target as HTMLElement;
-      let isEquals = false;
-      if (target.closest('.btn-preview')) {
-        if (arrCart.length === 0) {
-          Products.setOrder(Products.data.products[Number(target.getAttribute('data-id')) - 1]);
-        } else {
-          arrCart.forEach(function (el, i) {
-            if (Number(target.getAttribute('data-id')) !== el.id) {
-              isEquals = true;
-              return arrCart;
-            } else if (Number(target.getAttribute('data-id')) === el.id) {
-              arrCart.splice(i, 1);
-              isEquals = false;
-              return arrCart;
-            }
-          });
-        }
-        if (isEquals !== false) {
-          Products.setOrder(Products.data.products[Number(target.getAttribute('data-id')) - 1]);
-        }
+
+    $productList.addEventListener('click', (event) => {
+      if (!(event.target instanceof HTMLElement)) {
+        return;
       }
-      console.log(arrCart);
+
+      const isAddingButton = event.target.classList.contains(ProductPreview.classes.addToCart);
+      const isDroppingButton = event.target.classList.contains(ProductPreview.classes.dropFromCart);
+      if (!isAddingButton && !isDroppingButton) {
+        return;
+      }
+
+      const id = event.target.dataset.id;
+      if (id === undefined) {
+        return;
+      }
+
+      if (isAddingButton) {
+        App.increaseOrder(id);
+      } else {
+        App.dropOrder(id);
+      }
+
+      const product = productsMap[id];
+      const $newPreview = new ProductPreview(product).render();
+      this.$products[id].replaceWith($newPreview);
+      this.$products[id] = $newPreview;
+
+      const app = App.getInstance();
+      const $newHeader = new Header().render();
+      app.$header.replaceWith($newHeader);
+      app.$header = $newHeader;
     });
     return $fragment;
   }

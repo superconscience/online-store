@@ -73,3 +73,7 @@ export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 2
   };
   return <T>(<unknown>callable);
 }
+
+export const formatPrice = (price: number | string) => {
+  return '€' + Number(price).toFixed(2);
+};

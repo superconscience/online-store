@@ -18,12 +18,6 @@ body {
   background-repeat: no-repeat;
 }
 
-body {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -55,6 +49,12 @@ input[type='search']::-webkit-search-cancel-button {
   background-color: orange;
   border-radius: 100%;
   cursor: pointer;
+}
+
+#root {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .main {
