@@ -4,7 +4,7 @@ import Header from '../../core/components/header/index';
 import ErrorPage, { ErrorTypes } from '../error/index';
 import { data } from '../../data';
 import { Orders, Product, PromoCodes } from '../../types';
-import { queryHelper } from '../../utils/functions';
+import { queryHelper, replaceWith } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
 import CartPage from '../cart';
 import SearchBar from '../../core/components/search-bar';
@@ -118,8 +118,7 @@ class App {
   static refreshHeader() {
     const instance = App.getInstance();
     const $newHeader = new Header().render();
-    instance.$header.replaceWith($newHeader);
-    instance.$header = $newHeader;
+    instance.$header = replaceWith(instance.$header, $newHeader);
   }
 
   query() {

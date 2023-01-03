@@ -2,7 +2,7 @@ import { data } from '../../../data';
 import App from '../../../pages/app';
 import { productsMap } from '../../../products-map';
 import { Product } from '../../../types';
-import { queryHelper } from '../../../utils/functions';
+import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import ProductPreview from '../product-preview';
 import SearchBar from '../search-bar';
@@ -95,8 +95,7 @@ class Products extends Component {
 
       const product = productsMap[id];
       const $newPreview = new ProductPreview(product).render();
-      this.$products[id].replaceWith($newPreview);
-      this.$products[id] = $newPreview;
+      this.$products[id] = replaceWith(this.$products[id], $newPreview);
 
       App.refreshHeader();
     });

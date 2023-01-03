@@ -2,6 +2,7 @@ import CartItem from '../../core/components/cart-item';
 import CartPageControl from '../../core/components/cart-page-control';
 import CartSummary from '../../core/components/cart-summary';
 import Page from '../../core/templates/page';
+import { replaceWith } from '../../utils/functions';
 import App from '../app';
 
 class CartPage extends Page {
@@ -96,9 +97,7 @@ class CartPage extends Page {
 
       if (quantity > 0) {
         const $newCartItem = new CartItem(id, number).render();
-
-        this.$cartItems[id].replaceWith($newCartItem);
-        this.$cartItems[id] = $newCartItem;
+        this.$cartItems[id] = replaceWith(this.$cartItems[id], $newCartItem);
 
         this.summary.refreshOnOrder();
       } else {
@@ -110,9 +109,7 @@ class CartPage extends Page {
 
         if (App.getOrdersTotalQuantity() > 0) {
           const $newList = this.buildList();
-
-          this.$list.replaceWith($newList);
-          this.$list = $newList;
+          this.$list = replaceWith(this.$list, $newList);
 
           this.summary.refreshOnOrder();
         } else {
@@ -120,9 +117,7 @@ class CartPage extends Page {
             return;
           }
           const $newCart = this.buildCart();
-
-          this.$cart.replaceWith($newCart);
-          this.$cart = $newCart;
+          this.$cart = replaceWith(this.$cart, $newCart);
         }
       }
 

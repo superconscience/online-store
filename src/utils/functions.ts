@@ -91,3 +91,25 @@ export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 2
 export const formatPrice = (price: number | string) => {
   return '€' + Number(price).toFixed(2);
 };
+
+export const replaceWith = ($element: HTMLElement, $newElement: HTMLElement) => {
+  $element.replaceWith($newElement);
+  return $newElement;
+};
+
+export const remove = ($element: HTMLElement | null) => {
+  if ($element) {
+    $element.remove();
+  }
+  return null;
+};
+
+export const before = ($target: HTMLElement, $element: HTMLElement) => {
+  $target.before($element);
+  return $element;
+};
+
+export const after = ($target: HTMLElement, $element: HTMLElement) => {
+  $target.after($element);
+  return $element;
+};

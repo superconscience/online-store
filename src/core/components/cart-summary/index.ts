@@ -1,6 +1,6 @@
 import App, { promoCodes } from '../../../pages/app';
 import { PromoCodes } from '../../../types';
-import { datasetHelper, formatPrice } from '../../../utils/functions';
+import { after, before, datasetHelper, formatPrice, remove, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 
 type PromoDataset = {
@@ -217,56 +217,47 @@ class CartSummary extends Component {
   }
 
   refreshTotalProducts() {
-    const $newTotalProducts = this.buildTotalProducts();
-    this.$totalProducts.replaceWith($newTotalProducts);
-    this.$totalProducts = $newTotalProducts;
+    this.$totalProducts = replaceWith(this.$totalProducts, this.buildTotalProducts());
   }
 
   refreshTotalPrice() {
     const $newTotalPrice = this.buildTotalPrice();
+
     if (this._promoDiscount > 0) {
       $newTotalPrice.classList.add(CartSummary.classes.oldPrice);
     }
-    this.$totalPrice.replaceWith($newTotalPrice);
-    this.$totalPrice = $newTotalPrice;
+
+    this.$totalPrice = replaceWith(this.$totalPrice, $newTotalPrice);
   }
 
   refreshTotalPriceWithPromo() {
-    if (this.$totalPriceWithPromo) {
-      this.$totalPriceWithPromo.remove();
-      this.$totalPriceWithPromo = null;
-    }
+    this.$totalPriceWithPromo = remove(this.$totalPriceWithPromo);
+
     if (this.promoDiscount === 0) {
       return;
     }
-    const $newTotalPriceWithPromo = this.buildTotalPriceWithPromo();
-    this.$totalPrice.after($newTotalPriceWithPromo);
-    this.$totalPriceWithPromo = $newTotalPriceWithPromo;
+
+    this.$totalPriceWithPromo = after(this.$totalPrice, this.buildTotalPriceWithPromo());
   }
 
   refreshPromoResult(value?: string) {
     const $promoResult = this.buildPromoResult(value || '');
 
-    if (this.$promoResult) {
-      this.$promoResult.remove();
-      this.$promoResult = null;
-    }
+    this.$promoResult = remove(this.$promoResult);
 
     if ($promoResult) {
-      this.$promoCode.after($promoResult);
-      this.$promoResult = $promoResult;
+      this.$promoResult = after(this.$promoCode, $promoResult);
     }
   }
 
   refreshAppliedPromo() {
-    if (this.$appliedPromo) {
-      this.$appliedPromo.remove();
-      this.$appliedPromo = null;
-    }
+    this.$appliedPromo = remove(this.$appliedPromo);
 
     const $newAppliedPromo = this.buildAppliedPromo();
-    this.$appliedPromo = $newAppliedPromo;
-    $newAppliedPromo && this.$promoCode.before($newAppliedPromo);
+
+    if ($newAppliedPromo) {
+      this.$appliedPromo = before(this.$promoCode, $newAppliedPromo);
+    }
   }
 
   refreshOnOrder() {
