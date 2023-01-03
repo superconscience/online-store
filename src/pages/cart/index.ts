@@ -1,11 +1,12 @@
 import CartItem from '../../core/components/cart-item';
+import CartPageControl from '../../core/components/cart-page-control';
 import CartSummary from '../../core/components/cart-summary';
 import Page from '../../core/templates/page';
 import App from '../app';
 
 class CartPage extends Page {
   $cart: HTMLElement | null = null;
-  // $cartListPageControl: HTMLElement;
+  $cartPageControl: HTMLElement;
   $list: HTMLElement | null = null;
   $summary: HTMLElement;
   $cartItems: Record<string, HTMLElement> = {};
@@ -15,8 +16,10 @@ class CartPage extends Page {
   constructor() {
     super();
     const summary = new CartSummary();
+    const pageControl = new CartPageControl();
     this.summary = summary;
     this.$summary = summary.render();
+    this.$cartPageControl = pageControl.render();
   }
 
   buildCart() {
@@ -47,7 +50,7 @@ class CartPage extends Page {
     $listWrapper.append($header, $list);
 
     $header.className = 'cart-list-header';
-    $header.append($title);
+    $header.append($title, this.$cartPageControl);
 
     $title.className = 'cart-list-header-title';
     $title.textContent = 'Products In Cart';

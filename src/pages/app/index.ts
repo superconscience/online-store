@@ -10,6 +10,7 @@ import CartPage from '../cart';
 import SearchBar from '../../core/components/search-bar';
 import Footer from '../../core/components/footer';
 import { productsMap } from '../../products-map';
+import CartPageControl from '../../core/components/cart-page-control';
 
 export enum PageIds {
   MainPage = 'main-page',
@@ -81,6 +82,7 @@ class App {
     const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
       this.query();
+      CartPageControl.query();
       App.renderNewPage(hash);
     };
     window.addEventListener('hashchange', routeChangeHandler);
@@ -244,6 +246,10 @@ class App {
     if (App.orders[productId]) {
       delete App.orders[productId];
     }
+  }
+
+  static getOrdersProductsQuantity() {
+    return Object.keys(App.orders).length;
   }
 
   static getOrdersTotalQuantity() {

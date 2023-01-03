@@ -141,6 +141,7 @@ class CartSummary extends Component {
     $input.className = CartSummary.classes.promoCodeInput;
     $input.classList.add(CartSummary.classes.enterPromoCode);
     $input.type = 'search';
+    $input.placeholder = 'Enter promo code';
 
     return $input;
   }
