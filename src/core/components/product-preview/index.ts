@@ -26,7 +26,6 @@ class ProductPreview extends Component {
       'category' | 'brand' | 'price' | 'discountPercentage' | 'rating' | 'stock'
     >[] = ['category', 'brand', 'price', 'discountPercentage', 'rating', 'stock'];
     const isOrdered = this.isOrdered();
-    console.log({ isOrdered });
     const $item = document.createElement('div');
     const $itemWrapper = document.createElement('div');
     const $itemText = document.createElement('div');

@@ -65,6 +65,20 @@ export const queryHelper = () => {
   return helper;
 };
 
+export const datasetHelper = () => {
+  return {
+    set: <Dataset extends DOMStringMap>($element: HTMLElement, dataset: Dataset) => {
+      Object.entries(dataset).forEach(([key, value]) => ($element.dataset[key] = value));
+    },
+    get: <Dataset extends DOMStringMap>(
+      $element: HTMLElement,
+      key: keyof Dataset extends string ? keyof Dataset : string
+    ) => {
+      return $element.dataset[key];
+    },
+  };
+};
+
 export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 20) {
   let h: number | NodeJS.Timeout = 0;
   const callable = (...args: unknown[]) => {

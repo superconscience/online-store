@@ -14,10 +14,10 @@ class MainPage extends Page {
   }
 
   render() {
-    const store = document.createElement('div');
-    store.className = 'store';
-    store.append(this.$sidebar, this.$products);
-    this.container.append(store);
+    const $store = document.createElement('div');
+    $store.className = 'store';
+    $store.append(this.$sidebar, this.$products);
+    this.container.append($store);
     return this.container;
   }
 }

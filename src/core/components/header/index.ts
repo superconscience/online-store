@@ -22,7 +22,7 @@ class Header extends Component {
 
     $cart.href = `/#${PageIds.CartPage}`;
     $cart.className = 'header-cart';
-    $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">${App.getOrdersCount()}</div></div>`;
+    $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">${App.getOrdersTotalQuantity()}</div></div>`;
 
     $fragment.append($brand, $totalPrice, $cart);
 

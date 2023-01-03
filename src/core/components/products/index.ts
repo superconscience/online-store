@@ -1,14 +1,13 @@
+import { data } from '../../../data';
 import App from '../../../pages/app';
+import { productsMap } from '../../../products-map';
+import { Product } from '../../../types';
 import { queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 import ProductPreview from '../product-preview';
 import SearchBar from '../search-bar';
 import SortBar from '../sort-bar';
 import ViewMode from '../view-mode';
-import { Product } from '../../../types';
-import { data } from '../../../data';
-import { productsMap } from '../../../products-map';
-import Header from '../header';
 const productsClassName = 'products';
 
 class Products extends Component {
@@ -99,10 +98,7 @@ class Products extends Component {
       this.$products[id].replaceWith($newPreview);
       this.$products[id] = $newPreview;
 
-      const app = App.getInstance();
-      const $newHeader = new Header().render();
-      app.$header.replaceWith($newHeader);
-      app.$header = $newHeader;
+      App.refreshHeader();
     });
     return $fragment;
   }

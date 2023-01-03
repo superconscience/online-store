@@ -28,7 +28,6 @@ class SearchBar extends Component {
     }
 
     const inputHandler = () => {
-      console.log('input');
       const value = $input.value.trim();
       const query = queryHelper();
       query.set('search', value);

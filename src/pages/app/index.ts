@@ -3,7 +3,7 @@ import MainPage from '../main/index';
 import Header from '../../core/components/header/index';
 import ErrorPage, { ErrorTypes } from '../error/index';
 import { data } from '../../data';
-import { Orders, Product } from '../../types';
+import { Orders, Product, PromoCodes } from '../../types';
 import { queryHelper } from '../../utils/functions';
 import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
 import CartPage from '../cart';
@@ -11,12 +11,23 @@ import SearchBar from '../../core/components/search-bar';
 import Footer from '../../core/components/footer';
 import { productsMap } from '../../products-map';
 
-export const enum PageIds {
+export enum PageIds {
   MainPage = 'main-page',
   CartPage = 'cart-page',
   ProductDetails = 'product-details',
   ErrorPage = 'error-page',
 }
+
+export const promoCodes: PromoCodes = {
+  rs: {
+    discount: 0.1,
+    text: `Rolling Scopes School`,
+  },
+  epm: {
+    discount: 0.1,
+    text: `EPAM Systems`,
+  },
+};
 
 class App {
   private static instance: App | null = null;
@@ -100,6 +111,13 @@ class App {
     App.container.append(this.$header, this.$main, this.$footer);
     App.renderNewPage('main-page');
     this.enableRouteChange();
+  }
+
+  static refreshHeader() {
+    const instance = App.getInstance();
+    const $newHeader = new Header().render();
+    instance.$header.replaceWith($newHeader);
+    instance.$header = $newHeader;
   }
 
   query() {
@@ -198,13 +216,14 @@ class App {
   static increaseOrder(productId: string): number {
     const orders = App.orders;
     const order = orders[productId];
+    const stock = productsMap[productId].stock;
     if (order) {
-      order.quantity += 1;
-      console.log(App.orders);
+      if (order.quantity < stock) {
+        order.quantity += 1;
+      }
       return order.quantity;
     } else {
-      orders[productId] = { quantity: 1 };
-      console.log(App.orders);
+      orders[productId] = { quantity: stock >= 1 ? 1 : 0 };
       return 1;
     }
     return 0;
@@ -213,10 +232,8 @@ class App {
   static decreaseOrder(productId: string): number {
     const order = App.orders[productId];
     if (order) {
-      order.quantity -= 1;
-      if (order.quantity === 0) {
-        App.dropOrder(productId);
-        return 0;
+      if (order.quantity > 0) {
+        order.quantity -= 1;
       }
       return order.quantity;
     }
@@ -227,15 +244,17 @@ class App {
     if (App.orders[productId]) {
       delete App.orders[productId];
     }
-    console.log(App.orders);
   }
 
-  static getOrdersCount() {
-    return Object.keys(App.orders).length;
+  static getOrdersTotalQuantity() {
+    return Object.values(App.orders).reduce((total, { quantity }) => total + quantity, 0);
   }
 
   static getOrdersTotalPrice() {
-    return Object.keys(App.orders).reduce((total, id) => total + (productsMap[id].price || 0), 0);
+    return Object.keys(App.orders).reduce(
+      (total, id) => total + (productsMap[id].price || 0) * App.orders[id].quantity,
+      0
+    );
   }
 }
 
