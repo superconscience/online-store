@@ -15,6 +15,8 @@ abstract class Page {
   render() {
     return this.container;
   }
+
+  query() {}
 }
 
 export default Page;

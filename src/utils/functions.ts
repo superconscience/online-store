@@ -59,7 +59,8 @@ export const queryHelper = () => {
 
     toString: () => query.toString().replace(/%E2%86%95/g, QUERY_VALUE_SEPARATOR),
 
-    apply: (pageId?: PageIds) => (window.location.href = `#${pageId ? pageId : App.pageId}?${query.toString()}`),
+    apply: (pageId?: PageIds, search = query.toString()) =>
+      (window.location.href = `#${pageId ? pageId : App.pageId}${search ? '?' + search : ''}`),
   };
 
   return helper;

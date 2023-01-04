@@ -1,16 +1,14 @@
-import Page from '../../core/templates/page';
-import MainPage from '../main/index';
-import Header from '../../core/components/header/index';
-import ErrorPage, { ErrorTypes } from '../error/index';
-import { data } from '../../data';
-import { Orders, Product, PromoCodes } from '../../types';
-import { queryHelper, replaceWith } from '../../utils/functions';
-import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
-import CartPage from '../cart';
-import SearchBar from '../../core/components/search-bar';
 import Footer from '../../core/components/footer';
+import Header from '../../core/components/header/index';
+import SearchBar from '../../core/components/search-bar';
+import Page from '../../core/templates/page';
+import { data } from '../../data';
 import { productsMap } from '../../products-map';
-import CartPageControl from '../../core/components/cart-page-control';
+import { Orders, Product, PromoCodes } from '../../types';
+import { replaceWith } from '../../utils/functions';
+import CartPage from '../cart';
+import ErrorPage, { ErrorTypes } from '../error/index';
+import MainPage from '../main/index';
 
 export enum PageIds {
   MainPage = 'main-page',
@@ -30,11 +28,14 @@ export const promoCodes: PromoCodes = {
   },
 };
 
+const getPageId = (hash: string) => hash.split('?').shift() || PageIds.MainPage;
+
 class App {
   private static instance: App | null = null;
   private static container: HTMLElement;
   private static defaultPageId = 'current-page';
   static pageId: PageIds;
+  static page: Page;
   $header: HTMLElement;
   $main: HTMLElement;
   $footer: HTMLElement;
@@ -51,7 +52,9 @@ class App {
     if (!pageId) {
       pageId = PageIds.MainPage;
     }
+
     const regExp = (id: string) => new RegExp(`^${id}.*`);
+
     if (regExp(PageIds.MainPage).test(pageId)) {
       page = new MainPage();
       App.pageId = PageIds.MainPage;
@@ -62,6 +65,7 @@ class App {
       page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
       App.pageId = PageIds.ErrorPage;
     }
+    App.page = page;
 
     if (page) {
       const $focused = document.querySelector(':focus');
@@ -81,25 +85,27 @@ class App {
   private enableRouteChange() {
     const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
-      this.query();
-      CartPageControl.query();
-      App.renderNewPage(hash);
+      if (App.pageId !== getPageId(hash)) {
+        App.renderNewPage(hash);
+      } else {
+        App.page.query && App.page.query();
+      }
     };
     window.addEventListener('hashchange', routeChangeHandler);
     window.addEventListener('load', routeChangeHandler);
   }
 
-  constructor() {
+  private constructor() {
     const $root = document.getElementById('root');
+    const $main = document.createElement('main');
     if (!$root) {
       throw new Error(`Please, please add a div with id "root" to index.html`);
     }
     App.container = $root;
     this.$header = new Header().render();
     this.$footer = new Footer().render();
-    const main = document.createElement('main');
-    main.className = 'main';
-    this.$main = main;
+    $main.className = 'main';
+    this.$main = $main;
   }
 
   static getInstance() {
@@ -119,83 +125,6 @@ class App {
     const instance = App.getInstance();
     const $newHeader = new Header().render();
     instance.$header = replaceWith(instance.$header, $newHeader);
-  }
-
-  query() {
-    const query = queryHelper();
-    const category = query.get('category');
-    const brand = query.get('brand');
-    const price = query.get('price');
-    const stock = query.get('stock');
-    const sort = query.get('sort');
-    const search = query.get('search');
-
-    let products = [...data.products];
-
-    if (category !== null) {
-      products = products.filter((p) =>
-        category.toLowerCase().split(QUERY_VALUE_SEPARATOR).includes(p.category.toLowerCase())
-      );
-    }
-
-    if (brand !== null) {
-      products = products.filter((p) =>
-        brand.toLowerCase().split(QUERY_VALUE_SEPARATOR).includes(p.brand.toLowerCase())
-      );
-    }
-
-    if (price !== null) {
-      const [min, max] = price.split(QUERY_VALUE_SEPARATOR).map((x) => Number(x));
-      if (max >= min) {
-        products = products.filter((p) => p.price >= min && p.price <= max);
-      }
-    }
-
-    if (stock !== null) {
-      const [min, max] = stock.split(QUERY_VALUE_SEPARATOR).map((x) => Number(x));
-      if (max >= min) {
-        products = products.filter((p) => p.stock >= min && p.stock <= max);
-      }
-    }
-
-    if (sort !== null) {
-      const sortMap: Record<
-        'price' | 'rating' | 'discount',
-        Extract<keyof Product, 'price' | 'rating' | 'discountPercentage'>
-      > = {
-        price: 'price',
-        rating: 'rating',
-        discount: 'discountPercentage',
-      } as const;
-      type Order = 'ASC' | 'DESC';
-
-      const isSortKey = (value: string): value is keyof typeof sortMap => {
-        return Object.keys(sortMap).includes(value);
-      };
-      const isOrder = (value: string): value is Order => {
-        return value === 'ASC' || value === 'DESC';
-      };
-      const sortHandler = (a: Product, b: Product, key: keyof typeof sortMap, order: Order) => {
-        const itemKey = sortMap[key];
-        return order === 'ASC'
-          ? a[itemKey] - b[itemKey]
-          : order === 'DESC'
-          ? b[itemKey] - a[itemKey]
-          : a[itemKey] - b[itemKey];
-      };
-
-      const [key, order] = sort.split('-');
-      if (isSortKey(key) && isOrder(order)) {
-        products = products.sort((a, b) => sortHandler(a, b, key, order));
-      }
-    }
-
-    if (search !== null) {
-      const regexp = new RegExp(search, 'gi');
-      products = products.filter((p) => regexp.test(p.title));
-    }
-
-    App.setProducts(products);
   }
 
   static getData() {

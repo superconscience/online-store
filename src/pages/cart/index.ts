@@ -132,6 +132,10 @@ class CartPage extends Page {
     this.container.append($cart);
     return this.container;
   }
+
+  query() {
+    console.log('refresh');
+  }
 }
 
 export default CartPage;
