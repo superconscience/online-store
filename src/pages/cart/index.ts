@@ -8,19 +8,22 @@ import App from '../app';
 class CartPage extends Page {
   $cart: HTMLElement | null = null;
   $cartPageControl: HTMLElement;
-  $list: HTMLElement | null = null;
+  $list: HTMLElement;
   $summary: HTMLElement;
   $cartItems: Record<string, HTMLElement> = {};
 
   summary: CartSummary;
+  pageControl: CartPageControl;
 
   constructor() {
     super();
     const summary = new CartSummary();
     const pageControl = new CartPageControl();
+    this.pageControl = pageControl;
     this.summary = summary;
     this.$summary = summary.render();
     this.$cartPageControl = pageControl.render();
+    this.$list = this.buildList();
   }
 
   buildCart() {
@@ -41,8 +44,7 @@ class CartPage extends Page {
     const $listWrapper = document.createElement('div');
     const $header = document.createElement('div');
     const $title = document.createElement('h2');
-    const $list = this.buildList();
-    this.$list = $list;
+    const $list = this.$list;
 
     $wrapper.className = 'cart-wrapper';
     $wrapper.append($listWrapper, this.$summary);
@@ -61,15 +63,23 @@ class CartPage extends Page {
 
   buildList() {
     const $list = document.createElement('ul');
-    this.$cartItems = {};
     const orders = App.getOrders();
+    const { limit, page } = this.pageControl.getParams();
+    const [numberLimit, numberPage] = [Number(limit), Number(page)];
+    const from = numberLimit * (numberPage - 1);
+    const to = from + numberLimit;
+    this.$cartItems = {};
 
     $list.className = 'cart-list';
+
     Object.keys(orders).forEach((id, i) => {
       const $item = new CartItem(id, (i + 1).toString()).render();
       this.$cartItems[id] = $item;
-      $list.append($item);
     });
+
+    Object.values(this.$cartItems)
+      .slice(from, to)
+      .forEach(($elem) => $list.append($elem));
 
     $list.addEventListener('click', (event) => {
       if (!(event.target instanceof HTMLElement)) {
@@ -119,11 +129,16 @@ class CartPage extends Page {
           const $newCart = this.buildCart();
           this.$cart = replaceWith(this.$cart, $newCart);
         }
+        this.query();
       }
 
       App.refreshHeader();
     });
     return $list;
+  }
+
+  refreshList() {
+    this.$list = replaceWith(this.$list, this.buildList());
   }
 
   render() {
@@ -134,7 +149,8 @@ class CartPage extends Page {
   }
 
   query() {
-    console.log('refresh');
+    this.pageControl.useQuery();
+    this.refreshList();
   }
 }
 

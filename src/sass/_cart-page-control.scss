@@ -32,6 +32,11 @@ $cart-page-control: cart-page-control;
   border-radius: 0.2rem;
   padding: 0.1rem;
   font-size: 140%;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 }
 
 .#{$cart-page-control}__numbers-indicator {

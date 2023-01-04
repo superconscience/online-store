@@ -93,7 +93,7 @@ export const formatPrice = (price: number | string) => {
   return '€' + Number(price).toFixed(2);
 };
 
-export const replaceWith = ($element: HTMLElement, $newElement: HTMLElement) => {
+export const replaceWith = <T extends HTMLElement>($element: T, $newElement: T) => {
   $element.replaceWith($newElement);
   return $newElement;
 };
