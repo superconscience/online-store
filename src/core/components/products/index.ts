@@ -1,7 +1,5 @@
-import { data } from '../../../data';
 import App from '../../../pages/app';
 import { productsMap } from '../../../products-map';
-import { Product } from '../../../types';
 import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import ProductPreview from '../product-preview';
@@ -14,8 +12,9 @@ class Products extends Component {
   $sortBar = new SortBar().render();
   $searchBar = new SearchBar().render();
   $viewMode = new ViewMode().render();
+
   private $products: Record<string, HTMLElement> = {};
-  private static data = { ...data };
+
   static readonly classes = {
     productList: 'product-list',
     header: `${productsClassName}__header`,
@@ -24,19 +23,9 @@ class Products extends Component {
     searchBar: `${productsClassName}__search-bar`,
     viewMode: `${productsClassName}__view-mode`,
   };
-  private static dataCarts: Product[];
 
   constructor() {
     super('div', productsClassName);
-    Products.dataCarts =
-      localStorage.getItem('card') !== null ? [...JSON.parse(localStorage.getItem('card') || '{}')] : [];
-  }
-
-  static getOrder() {
-    return Products.dataCarts;
-  }
-  static setOrder(data: Product) {
-    Products.dataCarts.push(data);
   }
 
   build() {

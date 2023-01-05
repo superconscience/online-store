@@ -1,8 +1,9 @@
-import CartItem from '../../core/components/cart-item';
+import CartItem, { CartItemInfoDataset } from '../../core/components/cart-item';
 import CartPageControl from '../../core/components/cart-page-control';
 import CartSummary from '../../core/components/cart-summary';
 import Page from '../../core/templates/page';
-import { replaceWith } from '../../utils/functions';
+import { PageIds } from '../../utils/constants';
+import { datasetHelper, replaceWith } from '../../utils/functions';
 import App from '../app';
 
 class CartPage extends Page {
@@ -134,6 +135,27 @@ class CartPage extends Page {
 
       App.refreshHeader();
     });
+
+    $list.addEventListener('click', (event) => {
+      if (!(event.target instanceof HTMLElement)) {
+        return;
+      }
+
+      const $info = event.target.closest<HTMLElement>(`.${CartItem.classes.info}`);
+
+      if (!$info) {
+        return;
+      }
+
+      const dataset = datasetHelper();
+      const id = dataset.get<CartItemInfoDataset>($info, 'id');
+
+      if (id !== undefined) {
+        window.location.href = `#${PageIds.ProductDetails}/${id}`;
+        return;
+      }
+    });
+
     return $list;
   }
 

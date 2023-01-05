@@ -10,6 +10,7 @@ import { replaceWith } from '../../utils/functions';
 import CartPage from '../cart';
 import ErrorPage, { ErrorTypes } from '../error/index';
 import MainPage from '../main/index';
+import ProductDetailsPage from '../product-details';
 
 const getPageId = (hash: string) => hash.split('?').shift() || PageIds.MainPage;
 
@@ -45,6 +46,9 @@ class App {
     } else if (regExp(PageIds.CartPage).test(pageId)) {
       App.pageId = PageIds.CartPage;
       page = new CartPage();
+    } else if (regExp(PageIds.ProductDetails).test(pageId)) {
+      App.pageId = PageIds.ProductDetails;
+      page = new ProductDetailsPage();
     } else {
       App.pageId = PageIds.ErrorPage;
       page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
@@ -170,6 +174,10 @@ class App {
     if (App.orders[productId]) {
       delete App.orders[productId];
     }
+  }
+
+  static isProductOrdered(id: Product['id']) {
+    return App.orders[id] !== undefined;
   }
 
   static getOrdersProductsQuantity() {

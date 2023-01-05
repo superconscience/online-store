@@ -16,7 +16,7 @@ class ProductPreview extends Component {
   constructor(product: Product, tagName = 'li', className = 'product-preview') {
     super(tagName, className);
     this.product = product;
-    if (this.isOrdered()) {
+    if (App.isProductOrdered(product.id)) {
       this.container.classList.add('in-cart');
     }
   }
@@ -26,7 +26,7 @@ class ProductPreview extends Component {
       keyof Product,
       'category' | 'brand' | 'price' | 'discountPercentage' | 'rating' | 'stock'
     >[] = ['category', 'brand', 'price', 'discountPercentage', 'rating', 'stock'];
-    const isOrdered = this.isOrdered();
+    const isOrdered = App.isProductOrdered(this.product.id);
     const $item = document.createElement('div');
     const $itemWrapper = document.createElement('div');
     const $itemText = document.createElement('div');

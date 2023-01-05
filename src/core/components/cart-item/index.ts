@@ -1,12 +1,14 @@
 import App from '../../../pages/app';
 import { productsMap } from '../../../products-map';
 import { Order, Product } from '../../../types';
-import { formatPrice } from '../../../utils/functions';
+import { datasetHelper, formatPrice } from '../../../utils/functions';
 import Component from '../../templates/components';
 
 const cartItemClassName = 'cart-item';
 const quantityControl = 'quantity-control';
 const elementClassName = (element: string) => `${cartItemClassName}__${element}`;
+
+export type CartItemInfoDataset = { id: string };
 
 class CartItem extends Component {
   private id: string;
@@ -44,6 +46,7 @@ class CartItem extends Component {
   }
 
   build() {
+    const dataset = datasetHelper();
     const product = this.product;
     const order = this.order;
     const totalPrice = product.price * order.quantity;
@@ -71,6 +74,7 @@ class CartItem extends Component {
 
     $info.className = CartItem.classes.info;
     $info.append($image, $details);
+    dataset.set<CartItemInfoDataset>($info, { id: this.id });
 
     $control.className = CartItem.classes.control;
     $control.append($stockControl, $quantityControl, $amountControl);
