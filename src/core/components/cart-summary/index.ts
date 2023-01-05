@@ -273,6 +273,8 @@ class CartSummary extends Component {
 
   render() {
     this.container.append(this.build());
+    this.refreshTotalPriceWithPromo();
+    this.refreshAppliedPromo();
 
     this.container.addEventListener('click', (event) => {
       if (!(event.target instanceof HTMLElement)) {
