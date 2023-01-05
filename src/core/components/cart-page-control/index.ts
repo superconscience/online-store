@@ -63,6 +63,7 @@ class CartPageControl extends Component {
 
     this.$limit = this.buildLimit();
     this.$numbers = this.buildNumbers();
+    this.useQuery();
   }
 
   build() {
