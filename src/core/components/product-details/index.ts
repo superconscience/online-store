@@ -2,6 +2,8 @@ import App from '../../../pages/app';
 import { Product } from '../../../types';
 import { replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
+import { formatPrice } from '../../../utils/functions';
+import ModalItem from '../modal';
 
 class ProductDetails extends Component {
   private readonly product: Product;
@@ -11,6 +13,18 @@ class ProductDetails extends Component {
     super(tagName, className);
     this.product = product;
     this.$orderButton = this.buildOrderButton();
+  }
+
+  generateLinkNavigation() {
+    const linkBlock = document.createDocumentFragment();
+    const linkNavigation = document.createElement('div');
+    linkNavigation.className = 'link-navigation';
+    linkNavigation.innerHTML = `<a href="/" class="link">STORE</a> >> 
+    <a class="link">${this.product.category}</a> >> 
+    <a class="link">${this.product.brand}</a> >> 
+    <a class="link">${this.product.title}</a>`;
+    linkBlock.append(linkNavigation);
+    return linkBlock;
   }
 
   generateDetail() {
@@ -26,7 +40,6 @@ class ProductDetails extends Component {
     const buyBlock = document.createElement('div');
     const buyBlockWrapper = document.createElement('div');
     const price = document.createElement('div');
-
     productDetail.className = 'block-deatail';
     productTitle.className = 'product-title';
     productPhoto.className = 'product-photo';
@@ -34,7 +47,7 @@ class ProductDetails extends Component {
     grandPhoto.className = 'grand-photo';
     productInfo.className = 'product-info';
     productData.className = 'product-data';
-    buyBlock.className = 'add-to-cart';
+    buyBlock.className = 'add-to-cart-block';
     buyBlockWrapper.className = 'add-to-cart-wrapper';
     price.className = 'detail-price';
 
@@ -62,9 +75,9 @@ class ProductDetails extends Component {
     </div>
     <div class="product-detail-item">
       <h3 class="title-category">Category:</h3>
-      <p class="detail-catrgory">${this.product.category}</p>
+      <p class="detail-category">${this.product.category}</p>
     </div>`;
-
+    price.textContent = `${formatPrice(this.product.price)}`;
     buyBlock.append(buyBlockWrapper);
     buyBlockWrapper.append(price, this.$orderButton, this.buildBuyButton());
 
@@ -93,7 +106,7 @@ class ProductDetails extends Component {
     const productId = this.product.id;
     const isOrdered = App.isProductOrdered(productId);
     $button.className = 'btn-order';
-    $button.textContent = isOrdered ? 'Drop from cart' : 'Add to cart';
+    $button.textContent = isOrdered ? 'DROP FROM CART' : 'ADD TO CART';
 
     $button.addEventListener('click', () => {
       if (isOrdered) {
@@ -111,7 +124,7 @@ class ProductDetails extends Component {
   buildBuyButton() {
     const $button = document.createElement('button');
     $button.className = 'btn-buy';
-    $button.textContent = 'Buy now';
+    $button.textContent = 'BUY NOW';
 
     $button.addEventListener('click', () => {
       console.log('show buy modal');
@@ -125,7 +138,7 @@ class ProductDetails extends Component {
   }
 
   render() {
-    this.container.append(this.generateDetail());
+    this.container.append(this.generateLinkNavigation(), this.generateDetail(), new ModalItem().render());
     return this.container;
   }
 }
