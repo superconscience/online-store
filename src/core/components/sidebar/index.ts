@@ -25,6 +25,8 @@ class Sidebar extends Component {
     const $resetButton = document.createElement('a');
     const $copyLinkButton = document.createElement('a');
 
+    const copyLinkText = 'Copy link';
+
     $filters.className = 'filters';
 
     $categories.className = 'categories';
@@ -40,8 +42,8 @@ class Sidebar extends Component {
     $resetButton.onclick = () => (query.removeFilters(), query.apply());
 
     $copyLinkButton.className = 'filters__copy-link-btn btn-filter';
-    $copyLinkButton.textContent = 'Copy Link';
-    // TODO: Add onclick eventlistener
+    $copyLinkButton.textContent = copyLinkText;
+
     $reset.append($resetButton, $copyLinkButton);
 
     $categories.append(this.$categoryFilter);
@@ -50,6 +52,14 @@ class Sidebar extends Component {
     $stock.append(this.$stockFilter);
 
     $filters.append($reset, $categories, $brands, $prices, $stock);
+
+    $copyLinkButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href);
+      $copyLinkButton.textContent = 'Copied !';
+      setTimeout(() => {
+        $copyLinkButton.textContent = copyLinkText;
+      }, 500);
+    });
     return $filters;
   }
 
