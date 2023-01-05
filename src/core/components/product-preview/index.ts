@@ -1,5 +1,6 @@
-import App, { PageIds } from '../../../pages/app';
+import App from '../../../pages/app';
 import { Product } from '../../../types';
+import { PageIds } from '../../../utils/constants';
 import { formatPrice } from '../../../utils/functions';
 import Component from '../../templates/components';
 

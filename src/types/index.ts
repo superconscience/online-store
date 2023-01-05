@@ -19,3 +19,5 @@ export interface Order {
 export type Orders = Record<string, Order>;
 
 export type PromoCodes = Record<string, { discount: number; text: string }>;
+
+export type PromoCodesKeys = (keyof PromoCodes)[];

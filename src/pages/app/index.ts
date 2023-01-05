@@ -4,29 +4,12 @@ import SearchBar from '../../core/components/search-bar';
 import Page from '../../core/templates/page';
 import { data } from '../../data';
 import { productsMap } from '../../products-map';
-import { Orders, Product, PromoCodes } from '../../types';
+import { Orders, Product, PromoCodesKeys } from '../../types';
+import { PageIds } from '../../utils/constants';
 import { replaceWith } from '../../utils/functions';
 import CartPage from '../cart';
 import ErrorPage, { ErrorTypes } from '../error/index';
 import MainPage from '../main/index';
-
-export enum PageIds {
-  MainPage = 'main-page',
-  CartPage = 'cart-page',
-  ProductDetails = 'product-details',
-  ErrorPage = 'error-page',
-}
-
-export const promoCodes: PromoCodes = {
-  rs: {
-    discount: 0.1,
-    text: `Rolling Scopes School`,
-  },
-  epm: {
-    discount: 0.1,
-    text: `EPAM Systems`,
-  },
-};
 
 const getPageId = (hash: string) => hash.split('?').shift() || PageIds.MainPage;
 
@@ -42,6 +25,7 @@ class App {
   static $focused: HTMLInputElement | null = null;
   private static data = { ...data };
   private static orders: Orders = {};
+  private static appliedPromoCodes: PromoCodesKeys = [];
 
   static renderNewPage(pageId: string) {
     const currentPageHTML = document.querySelector(`#${App.defaultPageId}`);
@@ -117,7 +101,7 @@ class App {
 
   run() {
     App.container.append(this.$header, this.$main, this.$footer);
-    App.renderNewPage('main-page');
+    App.renderNewPage(window.location.hash.slice(1));
     this.enableRouteChange();
   }
 
@@ -141,6 +125,18 @@ class App {
 
   static getOrders() {
     return App.orders;
+  }
+
+  static setOrders(orders: Orders) {
+    App.orders = orders;
+  }
+
+  static getAppliedPromoCodes() {
+    return App.appliedPromoCodes;
+  }
+
+  static setAppliedPromoCodes(codes: PromoCodesKeys) {
+    App.appliedPromoCodes = codes;
   }
 
   static increaseOrder(productId: string): number {

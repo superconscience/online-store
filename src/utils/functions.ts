@@ -1,5 +1,5 @@
-import App, { PageIds } from '../pages/app';
-import { QUERY_VALUE_SEPARATOR } from './constants';
+import App from '../pages/app';
+import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
 import { QueryKey } from './types';
 
 export const locationQuery = (parts = window.location.href.split('?')) => (parts.length > 1 ? parts.pop() : '');

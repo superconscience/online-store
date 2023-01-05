@@ -1,5 +1,6 @@
-import App, { promoCodes } from '../../../pages/app';
-import { PromoCodes } from '../../../types';
+import App from '../../../pages/app';
+import { PromoCodes, PromoCodesKeys } from '../../../types';
+import { promoCodes } from '../../../utils/constants';
 import { after, before, datasetHelper, formatPrice, remove, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 
@@ -43,14 +44,15 @@ class CartSummary extends Component {
   $appliedPromo: HTMLElement | null = null;
 
   private _promoDiscount = 0;
-  private _appliedPromoCodes: string[] = [];
+  private _appliedPromoCodes: PromoCodesKeys = [];
 
   get appliedPromoCodes() {
     return this._appliedPromoCodes;
   }
 
-  set appliedPromoCodes(value: string[]) {
+  set appliedPromoCodes(value: PromoCodesKeys) {
     this._appliedPromoCodes = value;
+    App.setAppliedPromoCodes(value);
     this.promoDiscount = this._appliedPromoCodes.reduce((total, promo) => promoCodes[promo].discount + total, 0);
   }
 
@@ -66,10 +68,13 @@ class CartSummary extends Component {
 
   constructor() {
     super('div', CartSummary.classes.cartSummary);
+
     this.$promoCodeInput = this.buildPromoCodeInput();
     this.$promoCode = this.buildPromoCode();
     this.$totalProducts = this.buildTotalProducts();
     this.$totalPrice = this.buildTotalPrice();
+
+    this.appliedPromoCodes = App.getAppliedPromoCodes();
   }
 
   build() {
