@@ -1,4 +1,5 @@
 import App from '../../../pages/app';
+import { PageIds } from '../../../utils/constants';
 import { datasetHelper, queryHelper, replaceWith } from '../../../utils/functions';
 import { QueryKey } from '../../../utils/types';
 import Component from '../../templates/components';
@@ -197,7 +198,7 @@ class CartPageControl extends Component {
       if (isLimitWarning) {
         query.set('limit', itemsCount.toString());
       }
-      query.apply();
+      query.apply(PageIds.CartPage);
       return;
     }
     this.params = { limit, page };

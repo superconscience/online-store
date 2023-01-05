@@ -40,14 +40,14 @@ class App {
     const regExp = (id: string) => new RegExp(`^${id}.*`);
 
     if (regExp(PageIds.MainPage).test(pageId)) {
-      page = new MainPage();
       App.pageId = PageIds.MainPage;
+      page = new MainPage();
     } else if (regExp(PageIds.CartPage).test(pageId)) {
-      page = new CartPage();
       App.pageId = PageIds.CartPage;
+      page = new CartPage();
     } else {
-      page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
       App.pageId = PageIds.ErrorPage;
+      page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
     }
     App.page = page;
 
