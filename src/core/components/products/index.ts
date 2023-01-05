@@ -7,6 +7,8 @@ import SortBar from '../sort-bar';
 import ViewMode from '../view-mode';
 import { Product } from '../../../types';
 import { data } from '../../../data';
+import DetailsPage from '../../../pages/details';
+import Header from '../header';
 const productsClassName = 'products';
 
 class Products extends Component {
@@ -54,7 +56,6 @@ class Products extends Component {
 
     $header.append(this.$sortBar, $stat, this.$searchBar, this.$viewMode);
     $fragment.append($header);
-
     if (actualProducts.length > 0) {
       actualProducts.forEach((p) => $productList.append(new ProductPreview(p).render()));
       $fragment.append($productList);
@@ -86,8 +87,9 @@ class Products extends Component {
         if (isEquals !== false) {
           Products.setOrder(Products.data.products[Number(target.getAttribute('data-id')) - 1]);
         }
+      } else if (target.closest('.btn-preview-details')) {
+        DetailsPage.setNumProd(Number(target.getAttribute('data-id')));
       }
-      console.log(arrCart);
     });
     return $fragment;
   }

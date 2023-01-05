@@ -1,5 +1,6 @@
 import { Product } from '../../../types';
 import Component from '../../templates/components';
+import { PageIds } from '../../../pages/app';
 
 class ProductPreview extends Component {
   private readonly product: Product;
@@ -12,7 +13,7 @@ class ProductPreview extends Component {
     let template = '';
     const title = document.createElement('h3');
     const buttonAddCard = document.createElement('button');
-    const buttonDeteils = document.createElement('button');
+    const buttonDeteils = document.createElement('a');
     const block = document.createElement('div') as HTMLElement;
     // const blockGeneral = document.createElement('div') as HTMLElement;
     const blockGeneral = document.createDocumentFragment();
@@ -20,9 +21,11 @@ class ProductPreview extends Component {
     buttonAddCard.textContent = 'ADD TO CARD';
     buttonDeteils.textContent = 'DETAILS';
     buttonAddCard.className = 'btn-preview';
-    buttonDeteils.className = 'btn-preview';
+    buttonDeteils.className = 'btn-preview-details';
+    buttonDeteils.href = `/#${PageIds.DetailsPage}`;
     blockButtons.className = 'block-buttons';
     buttonAddCard.setAttribute('data-id', String(this.product.id));
+    buttonDeteils.setAttribute('data-id', String(this.product.id));
     // blockGeneral.className = 'block-general';
     title.className = 'title-preview';
     // blockGeneral.style.backgroundImage = `url('${this.product.images[0]}')`;
