@@ -8,14 +8,22 @@ import { queryHelper, replaceWith } from '../../utils/functions';
 import App from '../app';
 
 class MainPage extends Page {
+  sidebar: Sidebar;
+  products: Products;
   $sidebar: HTMLElement;
   $products: HTMLElement;
 
   constructor() {
     super();
     this.useQuery();
-    this.$sidebar = new Sidebar().render();
-    this.$products = new Products().render();
+
+    const sidebar = new Sidebar();
+    const products = new Products();
+
+    this.sidebar = sidebar;
+    this.products = products;
+    this.$sidebar = sidebar.render();
+    this.$products = products.render();
   }
 
   render() {
@@ -26,14 +34,84 @@ class MainPage extends Page {
     return this.container;
   }
 
-  refresh() {
-    this.$sidebar = replaceWith(this.$sidebar, new Sidebar().render());
-    this.$products = replaceWith(this.$products, new Products().render());
+  refreshSidebar() {
+    this.sidebar = new Sidebar();
+    this.$sidebar = replaceWith(this.$sidebar, this.sidebar.render());
+  }
+
+  refreshProducts() {
+    this.products = new Products();
+    this.$products = replaceWith(this.$products, this.products.render());
+  }
+
+  refreshOnQuery() {
+    const [prevHref, currentHref] = App.getHistory();
+
+    const prevQuery = queryHelper(prevHref);
+    const currentQuery = queryHelper(currentHref);
+
+    const prevCategory = prevQuery.get('category');
+    const prevBrand = prevQuery.get('brand');
+    const prevPrice = prevQuery.get('price');
+    const prevStock = prevQuery.get('stock');
+    const prevSort = prevQuery.get('sort');
+    const prevSearch = prevQuery.get('search');
+    const prevBig = prevQuery.get('big');
+
+    const currentCategory = currentQuery.get('category');
+    const currentBrand = currentQuery.get('brand');
+    const currentPrice = currentQuery.get('price');
+    const currentStock = currentQuery.get('stock');
+    const currentSort = currentQuery.get('sort');
+    const currentSearch = currentQuery.get('search');
+    const currentBig = currentQuery.get('big');
+
+    if (prevPrice !== currentPrice) {
+      this.sidebar.refreshCategoryFilter();
+      this.sidebar.refreshBrandFilter();
+      this.sidebar.refreshStockFilter();
+      this.refreshProducts();
+      return;
+    }
+
+    if (prevStock !== currentStock) {
+      this.sidebar.refreshCategoryFilter();
+      this.sidebar.refreshBrandFilter();
+      this.sidebar.refreshPriceFilter();
+      this.refreshProducts();
+      return;
+    }
+
+    if (prevCategory !== currentCategory || prevBrand !== currentBrand) {
+      this.sidebar.refreshCategoryFilter();
+      this.sidebar.refreshBrandFilter();
+      this.sidebar.refreshPriceFilter();
+      this.sidebar.refreshStockFilter();
+      this.refreshProducts();
+      return;
+    }
+
+    if (prevSort !== currentSort) {
+      this.refreshProducts();
+      return;
+    }
+
+    if (prevSearch !== currentSearch) {
+      this.refreshSidebar();
+      this.products.refreshProductList();
+      return;
+    }
+
+    if (prevBig !== currentBig) {
+      this.products.refreshProductList();
+      this.products.refreshViewMode();
+      return;
+    }
   }
 
   query() {
     this.useQuery();
-    this.refresh();
+    this.refreshOnQuery();
   }
 
   useQuery() {

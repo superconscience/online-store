@@ -2,10 +2,11 @@ import App from '../pages/app';
 import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
 import { QueryKey } from './types';
 
-export const locationQuery = (parts = window.location.href.split('?')) => (parts.length > 1 ? parts.pop() : '');
+export const locationQuery = (href = window.location.href, parts = href.split('?')) =>
+  parts.length > 1 ? parts.pop() : '';
 
-export const queryHelper = () => {
-  const query = new URLSearchParams(locationQuery());
+export const queryHelper = (href = window.location.href) => {
+  const query = new URLSearchParams(locationQuery(href));
   const helper = {
     get: (key: QueryKey) => query.get(key),
 
@@ -80,13 +81,56 @@ export const datasetHelper = () => {
   };
 };
 
-export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 20) {
+type EventCallback = (event: Event, ...args: unknown[]) => void;
+type NoEventCallback = (...args: unknown[]) => void;
+
+function isEventCallback(cb: NoEventCallback | EventCallback): cb is EventCallback {
+  return true;
+}
+
+function isNoEventCallback(cb: NoEventCallback | EventCallback): cb is NoEventCallback {
+  return !isEventCallback(cb);
+}
+
+export function debounce(cb: NoEventCallback | EventCallback, wait = 20) {
   let h: number | NodeJS.Timeout = 0;
-  const callable = (...args: unknown[]) => {
-    clearTimeout(h as NodeJS.Timeout);
-    h = setTimeout(() => cb(...args), wait);
-  };
-  return <T>(<unknown>callable);
+  const callable = isNoEventCallback(cb)
+    ? (...args: unknown[]) => {
+        clearTimeout(h as NodeJS.Timeout);
+        h = setTimeout(() => cb(...args), wait);
+      }
+    : (event: Event, ...args: unknown[]) => {
+        clearTimeout(h as NodeJS.Timeout);
+        h = setTimeout(() => cb(event, ...args), wait);
+      };
+  return <NoEventCallback | EventCallback>(<unknown>callable);
+}
+
+export function throttle(cb: NoEventCallback | EventCallback, delay?: number) {
+  delay || (delay = 100);
+  let throttle: boolean | number | NodeJS.Timeout = false;
+
+  return isNoEventCallback(cb)
+    ? (...args: unknown[]) => {
+        if (throttle) {
+          return;
+        }
+        throttle = setTimeout(() => {
+          cb(...args);
+          throttle = false;
+        }, delay);
+        cb(...args);
+      }
+    : (event: Event, ...args: unknown[]) => {
+        if (throttle) {
+          return;
+        }
+        throttle = setTimeout(() => {
+          cb(event, ...args);
+          throttle = false;
+        }, delay);
+        cb(event, ...args);
+      };
 }
 
 export const formatPrice = (price: number | string) => {

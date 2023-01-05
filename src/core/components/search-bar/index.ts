@@ -16,6 +16,7 @@ class SearchBar extends Component {
   }
 
   build() {
+    const query = queryHelper();
     const currentValue = queryHelper().get('search');
     const $input = document.createElement('input');
     SearchBar.$input = $input;
@@ -29,7 +30,6 @@ class SearchBar extends Component {
 
     const inputHandler = () => {
       const value = $input.value.trim();
-      const query = queryHelper();
       query.set('search', value);
       query.apply();
     };

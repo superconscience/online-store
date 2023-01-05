@@ -18,15 +18,17 @@ class App {
   private static instance: App | null = null;
   private static container: HTMLElement;
   private static defaultPageId = 'current-page';
+  private static data = { ...data };
+  private static orders: Orders = {};
+  private static appliedPromoCodes: PromoCodesKeys = [];
+  private static history: [string, string] = [window.location.href, window.location.href];
+
   static pageId: PageIds;
   static page: Page;
   $header: HTMLElement;
   $main: HTMLElement;
   $footer: HTMLElement;
   static $focused: HTMLInputElement | null = null;
-  private static data = { ...data };
-  private static orders: Orders = {};
-  private static appliedPromoCodes: PromoCodesKeys = [];
 
   static renderNewPage(pageId: string) {
     const currentPageHTML = document.querySelector(`#${App.defaultPageId}`);
@@ -73,12 +75,14 @@ class App {
   private enableRouteChange() {
     const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
+      App.history = [App.history.pop() as string, window.location.href];
       if (App.pageId !== getPageId(hash)) {
         App.renderNewPage(hash);
       } else {
         App.page.query && App.page.query();
       }
     };
+
     window.addEventListener('hashchange', routeChangeHandler);
     window.addEventListener('load', routeChangeHandler);
   }
@@ -113,6 +117,10 @@ class App {
     const instance = App.getInstance();
     const $newHeader = new Header().render();
     instance.$header = replaceWith(instance.$header, $newHeader);
+  }
+
+  static getHistory() {
+    return App.history;
   }
 
   static getData() {

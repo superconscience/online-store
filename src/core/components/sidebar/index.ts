@@ -1,4 +1,5 @@
-import { queryHelper } from '../../../utils/functions';
+import App from '../../../pages/app';
+import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import CheckboxedFilter from '../checkboxed-filter';
 import RangedFilter from '../ranged-filter';
@@ -61,6 +62,78 @@ class Sidebar extends Component {
       }, 500);
     });
     return $filters;
+  }
+
+  refresh() {
+    const [prevHref, currentHref] = App.getHistory();
+
+    const prevQuery = queryHelper(prevHref);
+    const currentQuery = queryHelper(currentHref);
+
+    const prevCategory = prevQuery.get('category');
+    const prevBrand = prevQuery.get('brand');
+    const prevPrice = prevQuery.get('price');
+    const prevStock = prevQuery.get('stock');
+
+    const currentCategory = currentQuery.get('category');
+    const currentBrand = currentQuery.get('brand');
+    const currentPrice = currentQuery.get('price');
+    const currentStock = currentQuery.get('stock');
+
+    console.log(
+      'price',
+      prevPrice,
+      currentPrice,
+      '|',
+      'category',
+      prevQuery.get('category'),
+      currentQuery.get('category'),
+      '|',
+      'brand',
+      prevQuery.get('brand'),
+      currentQuery.get('brand'),
+      '|',
+      'stock',
+      prevStock,
+      currentStock
+    );
+
+    if (prevPrice !== currentPrice) {
+      this.refreshCategoryFilter();
+      this.refreshBrandFilter();
+      this.refreshStockFilter();
+      return;
+    }
+
+    if (prevStock !== currentStock) {
+      this.refreshCategoryFilter();
+      this.refreshBrandFilter();
+      this.refreshPriceFilter();
+      return;
+    }
+
+    if (prevCategory !== currentCategory || prevBrand !== currentBrand) {
+      this.refreshCategoryFilter();
+      this.refreshBrandFilter();
+      this.refreshPriceFilter();
+      this.refreshStockFilter();
+    }
+  }
+
+  refreshCategoryFilter() {
+    this.$categoryFilter = replaceWith(this.$categoryFilter, new CheckboxedFilter('category').render());
+  }
+
+  refreshBrandFilter() {
+    this.$brandFilter = replaceWith(this.$brandFilter, new CheckboxedFilter('brand').render());
+  }
+
+  refreshPriceFilter() {
+    this.$priceFilter = replaceWith(this.$priceFilter, new RangedFilter('price').render());
+  }
+
+  refreshStockFilter() {
+    this.$stockFilter = replaceWith(this.$stockFilter, new RangedFilter('stock').render());
   }
 
   render() {

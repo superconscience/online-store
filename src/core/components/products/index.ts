@@ -12,6 +12,8 @@ class Products extends Component {
   $sortBar = new SortBar().render();
   $searchBar = new SearchBar().render();
   $viewMode = new ViewMode().render();
+  $productList: HTMLElement;
+  $stat: HTMLElement;
 
   private $products: Record<string, HTMLElement> = {};
 
@@ -26,39 +28,44 @@ class Products extends Component {
 
   constructor() {
     super('div', productsClassName);
+    this.$productList = this.buildProductList();
+    this.$stat = this.buildStat();
   }
 
   build() {
-    const actualProducts = App.getProducts();
-    const isSmall = queryHelper().get('big') === 'false';
     const $fragment = document.createDocumentFragment();
-    const $productList = document.createElement('ul');
+    const $productList = this.$productList;
     const $header = document.createElement('div');
-    const $stat = document.createElement('div');
+    const $stat = this.$stat;
 
-    $productList.className = Products.classes.productList;
-    $productList.classList.toggle('big', !isSmall);
     $header.className = Products.classes.header;
-    $stat.className = Products.classes.stat;
-
-    $stat.textContent = `Found: ${actualProducts.length}`;
 
     $header.append(this.$sortBar, $stat, this.$searchBar, this.$viewMode);
-    $fragment.append($header);
+    $fragment.append($header, $productList);
 
-    if (actualProducts.length > 0) {
-      actualProducts.forEach((p) => {
-        const $preview = new ProductPreview(p).render();
-        $productList.append($preview);
-        this.$products[p.id] = $preview;
-      });
-      $fragment.append($productList);
-    } else {
+    return $fragment;
+  }
+
+  buildProductList() {
+    const actualProducts = App.getProducts();
+    if (actualProducts.length === 0) {
       const $notFound = document.createElement('div');
       $notFound.className = 'not-found';
       $notFound.textContent = 'No products found 😏';
-      $fragment.append($notFound);
+      return $notFound;
     }
+
+    const isSmall = queryHelper().get('big') === 'false';
+    const $productList = document.createElement('ul');
+
+    $productList.className = Products.classes.productList;
+    $productList.classList.toggle('big', !isSmall);
+
+    actualProducts.forEach((p) => {
+      const $preview = new ProductPreview(p).render();
+      $productList.append($preview);
+      this.$products[p.id] = $preview;
+    });
 
     $productList.addEventListener('click', (event) => {
       if (!(event.target instanceof HTMLElement)) {
@@ -88,7 +95,28 @@ class Products extends Component {
 
       App.refreshHeader();
     });
-    return $fragment;
+
+    return $productList;
+  }
+
+  buildStat() {
+    const actualProducts = App.getProducts();
+    const $stat = document.createElement('div');
+
+    $stat.className = Products.classes.stat;
+
+    $stat.textContent = `Found: ${actualProducts.length}`;
+
+    return $stat;
+  }
+
+  refreshProductList() {
+    this.$productList = replaceWith(this.$productList, this.buildProductList());
+    this.$stat = replaceWith(this.$stat, this.buildStat());
+  }
+
+  refreshViewMode() {
+    this.$viewMode = replaceWith(this.$viewMode, new ViewMode().render());
   }
 
   render() {

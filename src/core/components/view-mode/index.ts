@@ -1,3 +1,4 @@
+import { PageIds } from '../../../utils/constants';
 import { queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 
@@ -64,9 +65,8 @@ class ViewMode extends Component {
       if (!(button instanceof HTMLElement)) {
         return;
       }
-
       query.set('big', String(button.classList.contains(ViewMode.classes.big)));
-      query.apply();
+      query.apply(PageIds.MainPage);
     });
 
     return $fragment;
