@@ -122,6 +122,16 @@ class MainPage extends Page {
     const stock = query.get('stock');
     const sort = query.get('sort');
     const search = query.get('search');
+    const searchFields: Exclude<keyof Product, 'id' | 'thumbnail' | 'images'>[] = [
+      'title',
+      'description',
+      'price',
+      'discountPercentage',
+      'rating',
+      'stock',
+      'brand',
+      'category',
+    ];
 
     let products = [...data.products];
 
@@ -185,7 +195,7 @@ class MainPage extends Page {
 
     if (search !== null) {
       const regexp = new RegExp(search, 'gi');
-      products = products.filter((p) => regexp.test(p.title));
+      products = products.filter((p) => searchFields.some((f) => regexp.test(String(p[f]))));
     }
 
     App.setProducts(products);
