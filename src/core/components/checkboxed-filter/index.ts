@@ -95,7 +95,7 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
         query.remove(this.filterType, filterValue);
       }
 
-      window.location.href = `#${PageIds.MainPage}?${query.toString()}`;
+      query.apply(PageIds.MainPage);
     });
 
     return fragment;

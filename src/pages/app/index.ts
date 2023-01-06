@@ -6,7 +6,7 @@ import { data } from '../../data';
 import { productsMap } from '../../products-map';
 import { Orders, Product, PromoCodesKeys } from '../../types';
 import { PageIds } from '../../utils/constants';
-import { replaceWith } from '../../utils/functions';
+import { queryHelper, replaceWith } from '../../utils/functions';
 import CartPage from '../cart';
 import ErrorPage, { ErrorTypes } from '../error/index';
 import MainPage from '../main/index';
@@ -75,8 +75,10 @@ class App {
   private enableRouteChange() {
     const routeChangeHandler = () => {
       const hash = window.location.hash.slice(1);
+      const query = queryHelper();
       App.history = [App.history.pop() as string, window.location.href];
-      if (App.pageId !== getPageId(hash)) {
+
+      if (App.pageId !== getPageId(hash) || [...query.entries()].length === 0) {
         App.renderNewPage(hash);
       } else {
         App.page.query && App.page.query();

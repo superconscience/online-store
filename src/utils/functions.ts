@@ -2,11 +2,14 @@ import App from '../pages/app';
 import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
 import { QueryKey } from './types';
 
-export const locationQuery = (href = window.location.href, parts = href.split('?')) =>
-  parts.length > 1 ? parts.pop() : '';
+export const locationQuery = (href?: string) => {
+  const parts = (href || window.location.href).split('?');
+  return parts.length > 1 ? parts[parts.length - 1] : '';
+};
 
-export const queryHelper = (href = window.location.href) => {
-  const query = new URLSearchParams(locationQuery(href));
+export const queryHelper = (href?: string) => {
+  const lq = locationQuery(href);
+  const query = new URLSearchParams(lq);
   const helper = {
     get: (key: QueryKey) => query.get(key),
 
@@ -60,8 +63,9 @@ export const queryHelper = (href = window.location.href) => {
 
     toString: () => query.toString().replace(/%E2%86%95/g, QUERY_VALUE_SEPARATOR),
 
-    apply: (pageId?: PageIds, search = query.toString()) =>
-      (window.location.href = `#${pageId ? pageId : App.pageId}${search ? '?' + search : ''}`),
+    apply: (pageId?: PageIds, search = query.toString()) => {
+      window.location.href = `#${pageId ? pageId : App.pageId}${search ? '?' + search : ''}`;
+    },
   };
 
   return helper;

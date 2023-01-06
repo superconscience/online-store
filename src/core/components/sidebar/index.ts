@@ -1,4 +1,5 @@
 import App from '../../../pages/app';
+import { PageIds } from '../../../utils/constants';
 import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import CheckboxedFilter from '../checkboxed-filter';
@@ -40,7 +41,7 @@ class Sidebar extends Component {
     $resetButton.className = 'filters__reset-btn btn-filter';
     $resetButton.textContent = 'Reset Filters';
 
-    $resetButton.onclick = () => (query.removeFilters(), query.apply());
+    $resetButton.onclick = () => (query.removeFilters(), query.apply(PageIds.MainPage));
 
     $copyLinkButton.className = 'filters__copy-link-btn btn-filter';
     $copyLinkButton.textContent = copyLinkText;
@@ -79,24 +80,6 @@ class Sidebar extends Component {
     const currentBrand = currentQuery.get('brand');
     const currentPrice = currentQuery.get('price');
     const currentStock = currentQuery.get('stock');
-
-    console.log(
-      'price',
-      prevPrice,
-      currentPrice,
-      '|',
-      'category',
-      prevQuery.get('category'),
-      currentQuery.get('category'),
-      '|',
-      'brand',
-      prevQuery.get('brand'),
-      currentQuery.get('brand'),
-      '|',
-      'stock',
-      prevStock,
-      currentStock
-    );
 
     if (prevPrice !== currentPrice) {
       this.refreshCategoryFilter();

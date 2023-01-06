@@ -34,7 +34,6 @@ class RangedFilter extends Filter<RangedFilterType> {
   }
 
   build() {
-    const query = queryHelper();
     const defaultMinStr = this.items.defaultMin.toString();
     const defaultMaxStr = this.items.defaultMax.toString();
     const minStr = this.items.min.toString();
@@ -81,6 +80,7 @@ class RangedFilter extends Filter<RangedFilterType> {
     fragment.append(header, slider);
 
     const inputHandler = (event: Event) => {
+      const query = queryHelper();
       const input = event.target;
       if (!(input instanceof HTMLInputElement)) {
         return;

@@ -60,6 +60,7 @@ class ViewMode extends Component {
         return;
       }
 
+      const query = queryHelper();
       const button = e.target.closest(`.${ViewMode.classes.button}`);
 
       if (!(button instanceof HTMLElement)) {
