@@ -43,6 +43,7 @@ const baseConfig = {
     extensions: ['.ts', '.js'],
   },
   output: {
+    publicPath: '/',
     filename: 'index.js',
     path: path.resolve(__dirname, '../dist'),
   },

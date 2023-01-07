@@ -75,6 +75,10 @@ class App {
 
   private enableRouteChange() {
     const routeChangeHandler = () => {
+      if (window.location.pathname !== '/') {
+        App.renderNewPage(PageIds.ErrorPage);
+        return;
+      }
       const hash = window.location.hash.slice(1);
       const query = queryHelper();
       App.history = [App.history.pop() as string, window.location.href];
@@ -112,6 +116,12 @@ class App {
 
   run() {
     App.container.append(this.$header, this.$main, this.$footer);
+
+    if (window.location.pathname !== '/') {
+      App.renderNewPage(PageIds.ErrorPage);
+      return;
+    }
+
     App.renderNewPage(window.location.hash.slice(1));
     this.enableRouteChange();
   }
