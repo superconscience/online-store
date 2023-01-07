@@ -58,7 +58,12 @@ class CartItem extends Component {
     const $titleWrapper = document.createElement('div');
     const $title = document.createElement('h3');
     const $description = document.createElement('div');
-    const $other = document.createElement('div');
+    const $other1 = document.createElement('div');
+    const $other2 = document.createElement('div');
+    const $brandCategoryLabel = document.createElement('div');
+    const $brandCategorySeparator = document.createElement('div');
+    const $category = document.createElement('div');
+    const $brand = document.createElement('div');
     const $rating = document.createElement('div');
     const $discount = document.createElement('div');
     const $control = document.createElement('div');
@@ -84,10 +89,10 @@ class CartItem extends Component {
     $image.alt = product.title;
 
     $details.className = CartItem.classes.details;
-    $details.append($titleWrapper, $description, $other);
+    $details.append($titleWrapper, $description, $other1);
 
     $titleWrapper.className = CartItem.classes.titleWrapper;
-    $titleWrapper.append($title);
+    $titleWrapper.append($title, $other2);
 
     $title.className = CartItem.classes.title;
     $title.textContent = product.title;
@@ -95,11 +100,20 @@ class CartItem extends Component {
     $description.className = CartItem.classes.description;
     $description.textContent = product.description;
 
-    $other.className = CartItem.classes.other;
-    $other.append($rating, $discount);
+    $other1.className = CartItem.classes.other;
+    $other1.append($rating, $discount);
 
-    [$rating, $discount].forEach((el) => (el.className = CartItem.classes.otherItem));
+    $other2.className = CartItem.classes.other;
+    $other2.append($brandCategoryLabel, $brand, $brandCategorySeparator, $category);
 
+    [$brandCategoryLabel, $brandCategorySeparator, $category, $brand, $rating, $discount].forEach(
+      (el) => (el.className = CartItem.classes.otherItem)
+    );
+
+    $brandCategoryLabel.textContent = `Brand/Category: `;
+    $brandCategorySeparator.textContent = ' | ';
+    $category.textContent = `${product.category}`;
+    $brand.textContent = `${product.brand}`;
     $rating.textContent = `Rating: ${product.rating.toString()}`;
     $discount.textContent = `Discount: ${product.discountPercentage.toString()}`;
 
