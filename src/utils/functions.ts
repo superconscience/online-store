@@ -216,3 +216,9 @@ export const validateCardDate = (input: string) => {
 
   return creditCardDate.isValid() && today < creditCardDate.add(1, 'months');
 };
+
+export const isValidQueryParams = () => {
+  const query = queryHelper();
+  const validParamNames: QueryKey[] = ['big', 'brand', 'category', 'limit', 'page', 'price', 'search', 'sort', 'stock'];
+  return [...query.entries()].every(([p]) => validParamNames.some((vp) => vp === p));
+};
