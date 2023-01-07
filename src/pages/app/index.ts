@@ -41,7 +41,7 @@ class App {
       pageId = PageIds.MainPage;
     }
 
-    const regExp = (id: string) => new RegExp(`^${id}.*`);
+    const regExp = (id: string) => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
 
     if (regExp(PageIds.MainPage).test(pageId)) {
       App.pageId = PageIds.MainPage;
