@@ -1,0 +1,14 @@
+.not-found-page {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-page__message {
+  font-size: 200%;
+  background: #181a1c;
+  padding: 1rem;
+  border: 2px solid orange;
+  border-radius: 1rem;
+}

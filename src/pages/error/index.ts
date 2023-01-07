@@ -7,18 +7,27 @@ export const enum ErrorTypes {
 class ErrorPage extends Page {
   private errorType: ErrorTypes | string;
 
-  static TextObject: { [prop: string]: string } = {
-    '404': 'Error! The page was not found.',
-  };
-
   constructor(id: string, errorType: ErrorTypes | string) {
     super();
     this.errorType = errorType;
   }
 
+  build() {
+    const $notFound = document.createElement('div');
+    const $message = document.createElement('h1');
+
+    $notFound.append($message);
+    $notFound.className = 'not-found-page';
+
+    $message.className = 'not-found-page__message';
+
+    $message.textContent = `PAGE NOT FOUND (404)`;
+
+    return $notFound;
+  }
+
   render() {
-    const title = this.createHeaderTitle(ErrorPage.TextObject[this.errorType]);
-    this.container.append(title);
+    this.container.append(this.build());
     return this.container;
   }
 }
