@@ -171,7 +171,7 @@ class App {
       }
       return order.quantity;
     } else {
-      orders[productId] = { quantity: stock >= 1 ? 1 : 0 };
+      App.setOrders({ ...orders, [productId]: { quantity: stock >= 1 ? 1 : 0 } });
       return 1;
     }
     return 0;

@@ -86,7 +86,7 @@ class ProductDetails extends Component {
     $buyBlock.append($buyBlockWrapper);
     $buyBlockWrapper.append($price, this.$orderButton, this.buildBuyButton());
 
-    this.product.images.forEach((src, i) => {
+    [...new Set([...this.product.images])].forEach((src, i) => {
       const $img = this.buildSlideImage(src, i);
       $slides.append($img);
     });
@@ -165,11 +165,17 @@ class ProductDetails extends Component {
   }
 
   buildBuyButton() {
+    const productId = this.product.id;
+    const isOrdered = App.isProductOrdered(productId);
     const $button = document.createElement('button');
     $button.className = 'btn-buy';
     $button.textContent = 'BUY NOW';
 
     $button.addEventListener('click', () => {
+      if (!isOrdered) {
+        App.increaseOrder(productId.toString());
+      }
+      window.location.href = `/#${PageIds.CartPage}`;
       App.setModal(new ModalItem().render());
     });
 
