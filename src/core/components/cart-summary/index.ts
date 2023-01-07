@@ -3,6 +3,7 @@ import { PromoCodes, PromoCodesKeys } from '../../../types';
 import { promoCodes } from '../../../utils/constants';
 import { after, before, datasetHelper, formatPrice, remove, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
+import ModalItem from '../modal';
 
 type PromoDataset = {
   promo: string;
@@ -100,6 +101,10 @@ class CartSummary extends Component {
 
     $buyNow.className = CartSummary.classes.buyNow;
     $buyNow.textContent = 'Buy now';
+
+    $buyNow.addEventListener('click', () => {
+      App.setModal(new ModalItem().render());
+    });
 
     $promoCodeInput.addEventListener('input', (event) => {
       if (!(event.target instanceof HTMLInputElement)) {

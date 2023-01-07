@@ -1,19 +1,41 @@
+.modal {
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 13, 13, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal-content {
   padding: 1%;
   border: 1px solid orange;
   border-radius: 0.5rem;
   width: 40%;
   background-color: #181a1c;
-  //z-index: 99;
-  //position: absolute;
+  z-index: 99;
+  position: absolute;
 }
 
 .form-modal {
   height: fit-content;
 }
-.form-item {
+
+.person-detail-modal {
   width: 90%;
   margin: auto;
+}
+
+.form-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .modal-title-person {
   text-align: center;
@@ -30,7 +52,11 @@
   outline: none;
   font-size: 90%;
   text-align: center;
-  margin: 2% auto;
+  margin: 2% auto 3%;
+
+  &.input-error {
+    border-color: red;
+  }
 }
 .cart-detail-modal {
   margin-top: 1%;
@@ -44,13 +70,18 @@
 }
 .card-data {
   border: 1px solid orange;
-  margin: 0 auto;
   border-radius: 0.5rem;
   background: rgb(0, 9, 36);
   background: linear-gradient(90deg, rgb(0, 9, 36) 6%, rgb(9, 9, 121) 34%, rgb(0, 212, 255) 100%);
-  width: 55%;
   height: 7rem;
 }
+
+.card-data,
+.card-error {
+  width: 55%;
+  margin: 0 auto;
+}
+
 .card-img {
   background-color: #fff;
   width: 10%;
@@ -99,7 +130,7 @@
   outline: none;
   text-align: center;
   margin-left: 2%;
-  font-size: 90%;
+  font-size: 130%;
   color: #000;
   font-weight: 700;
 }
@@ -118,7 +149,7 @@
   outline: none;
   text-align: center;
   margin-left: 2%;
-  font-size: 90%;
+  font-size: 130%;
   color: #000;
   font-weight: 700;
 }
@@ -132,4 +163,55 @@
   cursor: pointer;
   display: block;
   margin: 5% auto;
+}
+
+.card-error {
+  margin-top: 0.5rem;
+  .error-message {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    display: block;
+
+  }
+}
+
+.error-message {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: #9a3535;
+  margin-top: -3%;
+  padding-left: 1rem;
+  font-size: 70%;
+  display: none;
+}
+
+.error-field-name {
+  color: inherit;
+  font-weight: 700;
+  font-size: 100%;
+  text-decoration: underline;
+  margin-right: 0.25em;
+}
+
+.input-error {
+
+  &  + .error-message {
+    display: block;
+  }
+
+  &.cart-number, 
+  &.cart-date,
+  &.cart-cvv {
+    border-color: red;
+    color: red;
+    border-width: 2px;
+  }
+
+}
+
+.order-finish {
+  text-align: center;
 }

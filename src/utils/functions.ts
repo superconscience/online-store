@@ -1,3 +1,4 @@
+import moment from 'moment';
 import App from '../pages/app';
 import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
 import { QueryKey } from './types';
@@ -161,4 +162,57 @@ export const before = ($target: HTMLElement, $element: HTMLElement) => {
 export const after = ($target: HTMLElement, $element: HTMLElement) => {
   $target.after($element);
   return $element;
+};
+
+export const validateEmail = (email: string): boolean => {
+  return Boolean(
+    email
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+  );
+};
+
+export const validateByCountAndLength = (input: string, minCount: number, minLength: number): boolean => {
+  if (input !== input.trim()) {
+    return false;
+  }
+  const words = input.split(' ');
+  if (words.length < minCount) {
+    return false;
+  }
+  if (words.some((x) => x.length < minLength)) {
+    return false;
+  }
+  return true;
+};
+
+export const validateName = (name: string): boolean => {
+  return validateByCountAndLength(name, 2, 3);
+};
+
+export const validateDeliveryAddress = (address: string): boolean => {
+  return validateByCountAndLength(address, 3, 5);
+};
+
+export const validatePhone = (phone: string): boolean => {
+  return /^\+[0-9]{9,}$/.test(phone);
+};
+
+export const validatePhoneInput = (input: string): boolean => {
+  const regExp = /[+0-9]/;
+  return input.length > 1 ? input.split('').every((x) => regExp.test(x)) : regExp.test(input);
+};
+
+export const validateCardDate = (input: string) => {
+  const [d1, d2, sep, d3, d4] = input.split('');
+  sep && 0;
+  if ([d1, d2, d3, d4].some((x) => !/^[0-9]{1,1}$/.test(x))) {
+    return false;
+  }
+  const creditCardDate = moment(d3 + d4 + d1 + d2, 'YYMM');
+  const today = moment();
+
+  return creditCardDate.isValid() && today < creditCardDate.add(1, 'months');
 };

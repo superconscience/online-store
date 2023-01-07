@@ -29,6 +29,7 @@ class App {
   $main: HTMLElement;
   $footer: HTMLElement;
   static $focused: HTMLInputElement | null = null;
+  static $modal: HTMLElement | null = null;
 
   static renderNewPage(pageId: string) {
     const currentPageHTML = document.querySelector(`#${App.defaultPageId}`);
@@ -115,6 +116,12 @@ class App {
     this.enableRouteChange();
   }
 
+  static setModal($modal: HTMLElement | null) {
+    App.$modal?.remove();
+    App.$modal = $modal;
+    $modal && document.body.append($modal);
+  }
+
   static refreshHeader() {
     const instance = App.getInstance();
     const $newHeader = new Header().render();
@@ -143,6 +150,7 @@ class App {
 
   static setOrders(orders: Orders) {
     App.orders = orders;
+    App.refreshHeader();
   }
 
   static getAppliedPromoCodes() {

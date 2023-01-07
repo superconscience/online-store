@@ -25,20 +25,6 @@ class ProductDetailsPage extends Page {
     const detailBlock = document.createElement('div');
     detailBlock.className = 'detail-block';
     detailBlock.append(new ProductDetails(this.product).render());
-
-    detailBlock.addEventListener('click', (event) => {
-      const target = event.target;
-
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-
-      if (target.closest('.btn-img')) {
-        const numberPhoto = Number(target.getAttribute('data-id'));
-        const grandPhoto = detailBlock.querySelector('.grand-photo') as HTMLElement;
-        grandPhoto.innerHTML = `<img  alt="Slide" src="${this.product.images[numberPhoto]}" class="img-big"/>`;
-      }
-    });
     return detailBlock;
   }
 

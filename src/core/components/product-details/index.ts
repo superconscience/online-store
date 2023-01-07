@@ -1,9 +1,12 @@
 import App from '../../../pages/app';
 import { Product } from '../../../types';
-import { replaceWith } from '../../../utils/functions';
+import { datasetHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import { formatPrice } from '../../../utils/functions';
 import ModalItem from '../modal';
+import { PageIds } from '../../../utils/constants';
+
+type ImageDataset = { index: string };
 
 class ProductDetails extends Component {
   private readonly product: Product;
@@ -19,7 +22,7 @@ class ProductDetails extends Component {
     const linkBlock = document.createDocumentFragment();
     const linkNavigation = document.createElement('div');
     linkNavigation.className = 'link-navigation';
-    linkNavigation.innerHTML = `<a href="/" class="link">STORE</a> >> 
+    linkNavigation.innerHTML = `<a href="/#${PageIds.MainPage}" class="link">STORE</a> >> 
     <a class="link">${this.product.category}</a> >> 
     <a class="link">${this.product.brand}</a> >> 
     <a class="link">${this.product.title}</a>`;
@@ -28,28 +31,30 @@ class ProductDetails extends Component {
   }
 
   generateDetail() {
-    let images = '';
-    const blockDetails = document.createDocumentFragment();
-    const productDetail = document.createElement('div');
-    const productTitle = document.createElement('div');
-    const productPhoto = document.createElement('div');
-    const slides = document.createElement('div');
-    const grandPhoto = document.createElement('div');
-    const productInfo = document.createElement('div');
-    const productData = document.createElement('div');
-    const buyBlock = document.createElement('div');
-    const buyBlockWrapper = document.createElement('div');
-    const price = document.createElement('div');
-    productDetail.className = 'block-deatail';
-    productTitle.className = 'product-title';
-    productPhoto.className = 'product-photo';
-    slides.className = 'slides';
-    grandPhoto.className = 'grand-photo';
-    productInfo.className = 'product-info';
-    productData.className = 'product-data';
-    buyBlock.className = 'add-to-cart-block';
-    buyBlockWrapper.className = 'add-to-cart-wrapper';
-    price.className = 'detail-price';
+    const dataset = datasetHelper();
+    // let images = '';
+    const $blockDetails = document.createDocumentFragment();
+    const $productDetail = document.createElement('div');
+    const $productTitle = document.createElement('div');
+    const $productPhoto = document.createElement('div');
+    const $slides = document.createElement('div');
+    const $grandPhoto = document.createElement('div');
+    const $productInfo = document.createElement('div');
+    const $productData = document.createElement('div');
+    const $buyBlock = document.createElement('div');
+    const $buyBlockWrapper = document.createElement('div');
+    const $price = document.createElement('div');
+    const $grandPhotoImg = this.buildGrandImage(this.product.images[0]);
+    $productDetail.className = 'block-deatail';
+    $productTitle.className = 'product-title';
+    $productPhoto.className = 'product-photo';
+    $slides.className = 'slides';
+    $grandPhoto.className = 'grand-photo';
+    $productInfo.className = 'product-info';
+    $productData.className = 'product-data';
+    $buyBlock.className = 'add-to-cart-block';
+    $buyBlockWrapper.className = 'add-to-cart-wrapper';
+    $price.className = 'detail-price';
 
     const title = `<h1 class="title-detail">${this.product.title}</h1>`;
 
@@ -77,28 +82,66 @@ class ProductDetails extends Component {
       <h3 class="title-category">Category:</h3>
       <p class="detail-category">${this.product.category}</p>
     </div>`;
-    price.textContent = `${formatPrice(this.product.price)}`;
-    buyBlock.append(buyBlockWrapper);
-    buyBlockWrapper.append(price, this.$orderButton, this.buildBuyButton());
+    $price.textContent = `${formatPrice(this.product.price)}`;
+    $buyBlock.append($buyBlockWrapper);
+    $buyBlockWrapper.append($price, this.$orderButton, this.buildBuyButton());
 
-    this.product.images.forEach(
-      (p, i) => (images += ` <img  alt="Slide" src="${p}" class="btn-img" data-id="${String(i)}"/>`)
-    );
+    this.product.images.forEach((src, i) => {
+      const $img = this.buildSlideImage(src, i);
+      $slides.append($img);
+    });
 
-    productTitle.innerHTML = title;
-    productInfo.innerHTML = infoProd;
-    slides.innerHTML = images;
+    $grandPhoto.append($grandPhotoImg);
 
-    productPhoto.append(slides);
-    productPhoto.append(grandPhoto);
-    productData.append(productPhoto);
-    productData.append(productInfo);
-    productData.append(buyBlock);
-    productDetail.append(productTitle);
-    productDetail.append(productData);
-    blockDetails.append(productDetail);
+    $productTitle.innerHTML = title;
+    $productInfo.innerHTML = infoProd;
 
-    return blockDetails;
+    $productPhoto.append($slides);
+    $productPhoto.append($grandPhoto);
+    $productData.append($productPhoto);
+    $productData.append($productInfo);
+    $productData.append($buyBlock);
+    $productDetail.append($productTitle);
+    $productDetail.append($productData);
+    $blockDetails.append($productDetail);
+
+    $slides.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+
+      if (target.closest('.btn-img')) {
+        const index = dataset.get<ImageDataset>(target, 'index');
+        const src = this.product.images[Number(index)];
+        $grandPhotoImg.src = src;
+      }
+    });
+
+    return $blockDetails;
+  }
+
+  buildGrandImage(src: string) {
+    const $img = document.createElement('img');
+
+    $img.className = 'img-big';
+    $img.alt = 'Slide';
+    $img.src = src;
+
+    return $img;
+  }
+
+  buildSlideImage(src: string, index: number) {
+    const dataset = datasetHelper();
+    const $img = document.createElement('img');
+
+    $img.className = 'btn-img';
+    $img.alt = 'Slide';
+    $img.src = src;
+    dataset.set<ImageDataset>($img, { index: index.toString() });
+
+    return $img;
   }
 
   buildOrderButton() {
@@ -127,7 +170,7 @@ class ProductDetails extends Component {
     $button.textContent = 'BUY NOW';
 
     $button.addEventListener('click', () => {
-      console.log('show buy modal');
+      App.setModal(new ModalItem().render());
     });
 
     return $button;
@@ -138,7 +181,7 @@ class ProductDetails extends Component {
   }
 
   render() {
-    this.container.append(this.generateLinkNavigation(), this.generateDetail(), new ModalItem().render());
+    this.container.append(this.generateLinkNavigation(), this.generateDetail());
     return this.container;
   }
 }
