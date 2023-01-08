@@ -41,7 +41,7 @@ class App {
       pageId = PageIds.MainPage;
     }
 
-    const regExp = (id: string) => new RegExp(`^${id}.*`);
+    const regExp = (id: string) => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
 
     if (regExp(PageIds.MainPage).test(pageId)) {
       App.pageId = PageIds.MainPage;
@@ -75,6 +75,10 @@ class App {
 
   private enableRouteChange() {
     const routeChangeHandler = () => {
+      if (window.location.pathname !== '/') {
+        App.renderNewPage(PageIds.ErrorPage);
+        return;
+      }
       const hash = window.location.hash.slice(1);
       const query = queryHelper();
       App.history = [App.history.pop() as string, window.location.href];
@@ -112,6 +116,12 @@ class App {
 
   run() {
     App.container.append(this.$header, this.$main, this.$footer);
+
+    if (window.location.pathname !== '/') {
+      App.renderNewPage(PageIds.ErrorPage);
+      return;
+    }
+
     App.renderNewPage(window.location.hash.slice(1));
     this.enableRouteChange();
   }
@@ -171,7 +181,7 @@ class App {
       }
       return order.quantity;
     } else {
-      orders[productId] = { quantity: stock >= 1 ? 1 : 0 };
+      App.setOrders({ ...orders, [productId]: { quantity: stock >= 1 ? 1 : 0 } });
       return 1;
     }
     return 0;
