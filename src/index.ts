@@ -1,5 +1,6 @@
 import './index.css';
 import App from './pages/app/index';
+import { logAssessment } from './utils/assessment';
 import { LSKeys } from './utils/constants';
 
 window.addEventListener('beforeunload', () => {
@@ -19,3 +20,5 @@ window.addEventListener('load', () => {
   const app = App.getInstance();
   app.run();
 });
+
+logAssessment();
