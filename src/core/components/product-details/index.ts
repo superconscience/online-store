@@ -32,7 +32,6 @@ class ProductDetails extends Component {
 
   generateDetail() {
     const dataset = datasetHelper();
-    // let images = '';
     const $blockDetails = document.createDocumentFragment();
     const $productDetail = document.createElement('div');
     const $productTitle = document.createElement('div');

@@ -180,7 +180,6 @@ const validation: Record<
     },
   },
   carddate: {
-    // formValidateFunc: (input: string) => /^\d{2,2}\/\d{2,2}$/.test(input) && Number(input.slice(0, 1)) <= 12,
     formValidateFunc: [validateCardDate, cardDateFilter],
     onFormValidationFail: [onCardValidationFail, onCardValidationFail],
     errorMessage: [
