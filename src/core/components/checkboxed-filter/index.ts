@@ -1,5 +1,6 @@
 import { data } from '../../../data';
-import App, { PageIds } from '../../../pages/app';
+import App from '../../../pages/app';
+import { PageIds } from '../../../utils/constants';
 import { queryHelper } from '../../../utils/functions';
 import Filter, { CheckboxedFilterType, CheckboxedItems } from '../../templates/filter';
 import CheckboxLine from '../checkbox-line';
@@ -94,7 +95,7 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
         query.remove(this.filterType, filterValue);
       }
 
-      window.location.href = `#${PageIds.MainPage}?${query.toString()}`;
+      query.apply(PageIds.MainPage);
     });
 
     return fragment;

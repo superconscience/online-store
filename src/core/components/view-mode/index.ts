@@ -1,3 +1,4 @@
+import { PageIds } from '../../../utils/constants';
 import { queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 
@@ -59,14 +60,14 @@ class ViewMode extends Component {
         return;
       }
 
+      const query = queryHelper();
       const button = e.target.closest(`.${ViewMode.classes.button}`);
 
       if (!(button instanceof HTMLElement)) {
         return;
       }
-
       query.set('big', String(button.classList.contains(ViewMode.classes.big)));
-      query.apply();
+      query.apply(PageIds.MainPage);
     });
 
     return $fragment;

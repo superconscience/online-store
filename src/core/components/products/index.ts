@@ -1,21 +1,22 @@
 import App from '../../../pages/app';
-import { queryHelper } from '../../../utils/functions';
+import { productsMap } from '../../../products-map';
+import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import ProductPreview from '../product-preview';
 import SearchBar from '../search-bar';
 import SortBar from '../sort-bar';
 import ViewMode from '../view-mode';
-import { Product } from '../../../types';
-import { data } from '../../../data';
-import DetailsPage from '../../../pages/details';
-import Header from '../header';
 const productsClassName = 'products';
 
 class Products extends Component {
   $sortBar = new SortBar().render();
   $searchBar = new SearchBar().render();
   $viewMode = new ViewMode().render();
-  private static data = { ...data };
+  $productList: HTMLElement;
+  $stat: HTMLElement;
+
+  private $products: Record<string, HTMLElement> = {};
+
   static readonly classes = {
     productList: 'product-list',
     header: `${productsClassName}__header`,
@@ -24,74 +25,98 @@ class Products extends Component {
     searchBar: `${productsClassName}__search-bar`,
     viewMode: `${productsClassName}__view-mode`,
   };
-  private static dataCarts: Product[];
 
   constructor() {
     super('div', productsClassName);
-    Products.dataCarts =
-      localStorage.getItem('card') !== null ? [...JSON.parse(localStorage.getItem('card') || '{}')] : [];
-  }
-
-  static getOrder() {
-    return Products.dataCarts;
-  }
-  static setOrder(data: Product) {
-    Products.dataCarts.push(data);
+    this.$productList = this.buildProductList();
+    this.$stat = this.buildStat();
   }
 
   build() {
-    const actualProducts = App.getProducts();
-    const isSmall = queryHelper().get('big') === 'false';
     const $fragment = document.createDocumentFragment();
-    const $productList = document.createElement('div');
+    const $productList = this.$productList;
     const $header = document.createElement('div');
-    const $stat = document.createElement('div');
+    const $stat = this.$stat;
+
+    $header.className = Products.classes.header;
+
+    $header.append(this.$sortBar, $stat, this.$searchBar, this.$viewMode);
+    $fragment.append($header, $productList);
+
+    return $fragment;
+  }
+
+  buildProductList() {
+    const actualProducts = App.getProducts();
+    if (actualProducts.length === 0) {
+      const $notFound = document.createElement('div');
+      $notFound.className = 'not-found';
+      $notFound.textContent = 'No products found 😏';
+      return $notFound;
+    }
+
+    const isSmall = queryHelper().get('big') === 'false';
+    const $productList = document.createElement('ul');
 
     $productList.className = Products.classes.productList;
     $productList.classList.toggle('big', !isSmall);
-    $header.className = Products.classes.header;
+
+    actualProducts.forEach((p) => {
+      const $preview = new ProductPreview(p).render();
+      $productList.append($preview);
+      this.$products[p.id] = $preview;
+    });
+
+    $productList.addEventListener('click', (event) => {
+      if (!(event.target instanceof HTMLElement)) {
+        return;
+      }
+
+      const isAddingButton = event.target.classList.contains(ProductPreview.classes.addToCart);
+      const isDroppingButton = event.target.classList.contains(ProductPreview.classes.dropFromCart);
+      if (!isAddingButton && !isDroppingButton) {
+        return;
+      }
+
+      const id = event.target.dataset.id;
+      if (id === undefined) {
+        return;
+      }
+
+      if (isAddingButton) {
+        App.increaseOrder(id);
+      } else {
+        App.dropOrder(id);
+      }
+
+      const product = productsMap[id];
+      const $newPreview = new ProductPreview(product).render();
+      this.$products[id] = replaceWith(this.$products[id], $newPreview);
+
+      App.refreshHeader();
+    });
+
+    return $productList;
+  }
+
+  buildStat() {
+    const actualProducts = App.getProducts();
+    const $stat = document.createElement('div');
+
     $stat.className = Products.classes.stat;
 
     $stat.textContent = `Found: ${actualProducts.length}`;
 
-    $header.append(this.$sortBar, $stat, this.$searchBar, this.$viewMode);
-    $fragment.append($header);
-    if (actualProducts.length > 0) {
-      actualProducts.forEach((p) => $productList.append(new ProductPreview(p).render()));
-      $fragment.append($productList);
-    } else {
-      const $notFound = document.createElement('div');
-      $notFound.className = 'not-found';
-      $notFound.textContent = 'No products found 😏';
-      $fragment.append($notFound);
-    }
-    $productList.addEventListener('click', function (event) {
-      const arrCart = Products.getOrder();
-      const target = event.target as HTMLElement;
-      let isEquals = false;
-      if (target.closest('.btn-preview')) {
-        if (arrCart.length === 0) {
-          Products.setOrder(Products.data.products[Number(target.getAttribute('data-id')) - 1]);
-        } else {
-          arrCart.forEach(function (el, i) {
-            if (Number(target.getAttribute('data-id')) !== el.id) {
-              isEquals = true;
-              return arrCart;
-            } else if (Number(target.getAttribute('data-id')) === el.id) {
-              arrCart.splice(i, 1);
-              isEquals = false;
-              return arrCart;
-            }
-          });
-        }
-        if (isEquals !== false) {
-          Products.setOrder(Products.data.products[Number(target.getAttribute('data-id')) - 1]);
-        }
-      } else if (target.closest('.btn-preview-details')) {
-        DetailsPage.setNumProd(Number(target.getAttribute('data-id')));
-      }
-    });
-    return $fragment;
+    return $stat;
+  }
+
+  refreshProductList() {
+    this.$productList = replaceWith(this.$productList, this.buildProductList());
+    this.$stat = replaceWith(this.$stat, this.buildStat());
+  }
+
+  refreshViewMode() {
+    this.$viewMode = replaceWith(this.$viewMode, new ViewMode().render());
   }
 
   render() {

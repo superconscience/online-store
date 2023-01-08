@@ -1,44 +1,35 @@
-import Page from '../../core/templates/page';
-import MainPage from '../main/index';
-import Header from '../../core/components/header/index';
-import ErrorPage, { ErrorTypes } from '../error/index';
-import { data } from '../../data';
-import { Product } from '../../types';
-import { queryHelper } from '../../utils/functions';
-import { QUERY_VALUE_SEPARATOR } from '../../utils/constants';
-import CartPage from '../cart';
-import DetailsPage from '../details';
-import SearchBar from '../../core/components/search-bar';
 import Footer from '../../core/components/footer';
+import Header from '../../core/components/header/index';
+import SearchBar from '../../core/components/search-bar';
+import Page from '../../core/templates/page';
+import { data } from '../../data';
+import { productsMap } from '../../products-map';
+import { Orders, Product, PromoCodesKeys } from '../../types';
+import { PageIds } from '../../utils/constants';
+import { queryHelper, replaceWith } from '../../utils/functions';
+import CartPage from '../cart';
+import ErrorPage, { ErrorTypes } from '../error/index';
+import MainPage from '../main/index';
+import ProductDetailsPage from '../product-details';
 
-export const enum PageIds {
-  MainPage = 'main-page',
-  CartPage = 'cart-page',
-  DetailsPage = 'details-page',
-  ErrorPage = 'error-page',
-}
+const getPageId = (hash: string) => hash.split('?').shift() || PageIds.MainPage;
 
 class App {
-  private static container: HTMLElement = document.body;
+  private static instance: App | null = null;
+  private static container: HTMLElement;
   private static defaultPageId = 'current-page';
+  private static data = { ...data };
+  private static orders: Orders = {};
+  private static appliedPromoCodes: PromoCodesKeys = [];
+  private static history: [string, string] = [window.location.href, window.location.href];
+
   static pageId: PageIds;
+  static page: Page;
   $header: HTMLElement;
   $main: HTMLElement;
   $footer: HTMLElement;
   static $focused: HTMLInputElement | null = null;
-  private static data = { ...data };
-
-  static getData() {
-    return App.data;
-  }
-
-  static getProducts() {
-    return App.data.products;
-  }
-
-  static setProducts(products: Product[]) {
-    App.data.products = products;
-  }
+  static $modal: HTMLElement | null = null;
 
   static renderNewPage(pageId: string) {
     const currentPageHTML = document.querySelector(`#${App.defaultPageId}`);
@@ -49,20 +40,23 @@ class App {
     if (!pageId) {
       pageId = PageIds.MainPage;
     }
-    const regExp = (id: string) => new RegExp(`^${id}.*`);
+
+    const regExp = (id: string) => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
+
     if (regExp(PageIds.MainPage).test(pageId)) {
-      page = new MainPage();
       App.pageId = PageIds.MainPage;
+      page = new MainPage();
     } else if (regExp(PageIds.CartPage).test(pageId)) {
-      page = new CartPage();
       App.pageId = PageIds.CartPage;
-    } else if (regExp(PageIds.DetailsPage).test(pageId)) {
-      page = new DetailsPage();
-      App.pageId = PageIds.DetailsPage;
+      page = new CartPage();
+    } else if (regExp(PageIds.ProductDetails).test(pageId)) {
+      App.pageId = PageIds.ProductDetails;
+      page = new ProductDetailsPage();
     } else {
-      page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
       App.pageId = PageIds.ErrorPage;
+      page = new ErrorPage(PageIds.ErrorPage, ErrorTypes.Error_404);
     }
+    App.page = page;
 
     if (page) {
       const $focused = document.querySelector(':focus');
@@ -81,103 +75,152 @@ class App {
 
   private enableRouteChange() {
     const routeChangeHandler = () => {
+      if (window.location.pathname !== '/') {
+        App.renderNewPage(PageIds.ErrorPage);
+        return;
+      }
       const hash = window.location.hash.slice(1);
-      this.query();
-      App.renderNewPage(hash);
+      const query = queryHelper();
+      App.history = [App.history.pop() as string, window.location.href];
+
+      if (App.pageId !== getPageId(hash) || [...query.entries()].length === 0) {
+        App.renderNewPage(hash);
+      } else {
+        App.page.query && App.page.query();
+      }
     };
+
     window.addEventListener('hashchange', routeChangeHandler);
     window.addEventListener('load', routeChangeHandler);
   }
 
-  constructor() {
-    this.$header = new Header('header', 'header').render();
+  private constructor() {
+    const $root = document.getElementById('root');
+    const $main = document.createElement('main');
+    if (!$root) {
+      throw new Error(`Please, please add a div with id "root" to index.html`);
+    }
+    App.container = $root;
+    this.$header = new Header().render();
     this.$footer = new Footer().render();
-    const main = document.createElement('main');
-    main.className = 'main';
-    this.$main = main;
+    $main.className = 'main';
+    this.$main = $main;
+  }
+
+  static getInstance() {
+    if (!App.instance) {
+      App.instance = new App();
+    }
+    return App.instance;
   }
 
   run() {
     App.container.append(this.$header, this.$main, this.$footer);
-    App.renderNewPage('main-page');
+
+    if (window.location.pathname !== '/') {
+      App.renderNewPage(PageIds.ErrorPage);
+      return;
+    }
+
+    App.renderNewPage(window.location.hash.slice(1));
     this.enableRouteChange();
   }
 
-  query() {
-    const query = queryHelper();
-    const category = query.get('category');
-    const brand = query.get('brand');
-    const price = query.get('price');
-    const stock = query.get('stock');
-    const sort = query.get('sort');
-    const search = query.get('search');
+  static setModal($modal: HTMLElement | null) {
+    App.$modal?.remove();
+    App.$modal = $modal;
+    $modal && document.body.append($modal);
+  }
 
-    let products = [...data.products];
+  static refreshHeader() {
+    const instance = App.getInstance();
+    const $newHeader = new Header().render();
+    instance.$header = replaceWith(instance.$header, $newHeader);
+  }
 
-    if (category !== null) {
-      products = products.filter((p) =>
-        category.toLowerCase().split(QUERY_VALUE_SEPARATOR).includes(p.category.toLowerCase())
-      );
-    }
+  static getHistory() {
+    return App.history;
+  }
 
-    if (brand !== null) {
-      products = products.filter((p) =>
-        brand.toLowerCase().split(QUERY_VALUE_SEPARATOR).includes(p.brand.toLowerCase())
-      );
-    }
+  static getData() {
+    return App.data;
+  }
 
-    if (price !== null) {
-      const [min, max] = price.split(QUERY_VALUE_SEPARATOR).map((x) => Number(x));
-      if (max >= min) {
-        products = products.filter((p) => p.price >= min && p.price <= max);
+  static getProducts() {
+    return App.data.products;
+  }
+
+  static setProducts(products: Product[]) {
+    App.data.products = products;
+  }
+
+  static getOrders() {
+    return App.orders;
+  }
+
+  static setOrders(orders: Orders) {
+    App.orders = orders;
+    App.refreshHeader();
+  }
+
+  static getAppliedPromoCodes() {
+    return App.appliedPromoCodes;
+  }
+
+  static setAppliedPromoCodes(codes: PromoCodesKeys) {
+    App.appliedPromoCodes = codes;
+  }
+
+  static increaseOrder(productId: string): number {
+    const orders = App.orders;
+    const order = orders[productId];
+    const stock = productsMap[productId].stock;
+    if (order) {
+      if (order.quantity < stock) {
+        order.quantity += 1;
       }
+      return order.quantity;
+    } else {
+      App.setOrders({ ...orders, [productId]: { quantity: stock >= 1 ? 1 : 0 } });
+      return 1;
     }
+    return 0;
+  }
 
-    if (stock !== null) {
-      const [min, max] = stock.split(QUERY_VALUE_SEPARATOR).map((x) => Number(x));
-      if (max >= min) {
-        products = products.filter((p) => p.stock >= min && p.stock <= max);
+  static decreaseOrder(productId: string): number {
+    const order = App.orders[productId];
+    if (order) {
+      if (order.quantity > 0) {
+        order.quantity -= 1;
       }
+      return order.quantity;
     }
+    return 0;
+  }
 
-    if (sort !== null) {
-      const sortMap: Record<
-        'price' | 'rating' | 'discount',
-        Extract<keyof Product, 'price' | 'rating' | 'discountPercentage'>
-      > = {
-        price: 'price',
-        rating: 'rating',
-        discount: 'discountPercentage',
-      } as const;
-      type Order = 'ASC' | 'DESC';
-
-      const isSortKey = (value: string): value is keyof typeof sortMap => {
-        return Object.keys(sortMap).includes(value);
-      };
-      const isOrder = (value: string): value is Order => {
-        return value === 'ASC' || value === 'DESC';
-      };
-      const sortHandler = (a: Product, b: Product, key: keyof typeof sortMap, order: Order) => {
-        const itemKey = sortMap[key];
-        return order === 'ASC'
-          ? a[itemKey] - b[itemKey]
-          : order === 'DESC'
-          ? b[itemKey] - a[itemKey]
-          : a[itemKey] - b[itemKey];
-      };
-
-      const [key, order] = sort.split('-');
-      if (isSortKey(key) && isOrder(order)) {
-        products = products.sort((a, b) => sortHandler(a, b, key, order));
-      }
+  static dropOrder(productId: string) {
+    if (App.orders[productId]) {
+      delete App.orders[productId];
     }
+  }
 
-    if (search !== null) {
-      const regexp = new RegExp(search, 'gi');
-      products = products.filter((p) => regexp.test(p.title));
-    }
+  static isProductOrdered(id: Product['id']) {
+    return App.orders[id] !== undefined;
+  }
 
-    App.setProducts(products);
+  static getOrdersProductsQuantity() {
+    return Object.keys(App.orders).length;
+  }
+
+  static getOrdersTotalQuantity() {
+    return Object.values(App.orders).reduce((total, { quantity }) => total + quantity, 0);
+  }
+
+  static getOrdersTotalPrice() {
+    return Object.keys(App.orders).reduce(
+      (total, id) => total + (productsMap[id].price || 0) * App.orders[id].quantity,
+      0
+    );
   }
 }
 

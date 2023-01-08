@@ -1,10 +1,11 @@
 import Component from '../../templates/components';
-import { PageIds } from '../../../pages/app/index';
-import Products from '../products';
+import App from '../../../pages/app/index';
+import { formatPrice } from '../../../utils/functions';
+import { PageIds } from '../../../utils/constants';
 
 class Header extends Component {
-  constructor(tagName: string, className: string) {
-    super(tagName, className);
+  constructor() {
+    super('header', 'header');
   }
 
   build() {
@@ -18,11 +19,11 @@ class Header extends Component {
     $brand.innerHTML = `<div class="logo">🛍</div><h2 class="brand-name">Online Store</h2>`;
 
     $totalPrice.className = 'total-price';
-    $totalPrice.innerHTML = `<span>Cart total: 0</span>`;
+    $totalPrice.innerHTML = `<span>Cart total:</span> ${formatPrice(App.getOrdersTotalPrice())}`;
 
-    $cart.className = 'header-cart';
     $cart.href = `/#${PageIds.CartPage}`;
-    $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">0</div></div>`;
+    $cart.className = 'header-cart';
+    $cart.innerHTML = `<div class="header-cart__total"><div class="header-cart__total-content">${App.getOrdersTotalQuantity()}</div></div>`;
 
     $fragment.append($brand, $totalPrice, $cart);
 

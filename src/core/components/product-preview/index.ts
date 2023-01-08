@@ -1,57 +1,103 @@
+import App from '../../../pages/app';
 import { Product } from '../../../types';
+import { PageIds } from '../../../utils/constants';
+import { formatPrice } from '../../../utils/functions';
 import Component from '../../templates/components';
-import { PageIds } from '../../../pages/app';
+
+const productItemClassName = 'product-item';
 
 class ProductPreview extends Component {
   private readonly product: Product;
-  constructor(product: Product, tagName = 'div', className = 'block-general') {
+  static readonly classes = {
+    addToCart: 'add-to-cart',
+    dropFromCart: 'drop-from-cart',
+  };
+
+  constructor(product: Product, tagName = 'li', className = 'product-preview') {
     super(tagName, className);
     this.product = product;
+    if (App.isProductOrdered(product.id)) {
+      this.container.classList.add('in-cart');
+    }
   }
 
   build() {
-    let template = '';
-    const title = document.createElement('h3');
-    const buttonAddCard = document.createElement('button');
-    const buttonDeteils = document.createElement('a');
-    const block = document.createElement('div') as HTMLElement;
-    // const blockGeneral = document.createElement('div') as HTMLElement;
-    const blockGeneral = document.createDocumentFragment();
-    const blockButtons = document.createElement('div') as HTMLElement;
-    buttonAddCard.textContent = 'ADD TO CARD';
-    buttonDeteils.textContent = 'DETAILS';
-    buttonAddCard.className = 'btn-preview';
-    buttonDeteils.className = 'btn-preview-details';
-    buttonDeteils.href = `/#${PageIds.DetailsPage}`;
-    blockButtons.className = 'block-buttons';
-    buttonAddCard.setAttribute('data-id', String(this.product.id));
-    buttonDeteils.setAttribute('data-id', String(this.product.id));
-    // blockGeneral.className = 'block-general';
-    title.className = 'title-preview';
-    // blockGeneral.style.backgroundImage = `url('${this.product.images[0]}')`;
-    this.container.style.backgroundImage = `url('${this.product.images[0]}')`;
-    block.className = 'block-prev';
-    // block.setAttribute('data-id,'eeee');
-    this.product.category &&
-      (template += `<p class="category__name prev">Category: <span class="prev-value">${this.product.category}</span></p>`);
-    this.product.brand &&
-      (template += `<p class="brand__name prev">Brand: <span class="prev-value">${this.product.brand}</span></p>`);
-    this.product.price &&
-      (template += `<p class="price__name prev">Price: <span class="prev-value">${this.product.price}</span></p>`);
-    this.product.discountPercentage &&
-      (template += `<p class="discount__name prev">Discount: <span class="prev-value">${this.product.discountPercentage}</span></p>`);
-    this.product.rating &&
-      (template += `<p class="rating__name prev">Rating: <span class="prev-value">${this.product.rating}</span></p>`);
-    this.product.stock &&
-      (template += `<p class="stock__name prev">Stock: <span class="prev-value">${this.product.stock}</span></p>`);
-    title.innerHTML = this.product.title;
-    block.innerHTML = template;
-    blockButtons.append(buttonAddCard);
-    blockButtons.append(buttonDeteils);
-    blockGeneral.append(title);
-    blockGeneral.append(block);
-    blockGeneral.append(blockButtons);
-    return blockGeneral;
+    const infoListKeys: Extract<
+      keyof Product,
+      'category' | 'brand' | 'price' | 'discountPercentage' | 'rating' | 'stock'
+    >[] = ['category', 'brand', 'price', 'discountPercentage', 'rating', 'stock'];
+    const isOrdered = App.isProductOrdered(this.product.id);
+    const $item = document.createElement('div');
+    const $itemWrapper = document.createElement('div');
+    const $itemText = document.createElement('div');
+    const $itemButtons = document.createElement('div');
+    const $buttonAddToCart = document.createElement('button');
+    const $buttonDetails = document.createElement('a');
+    const $itemTitle = document.createElement('h4');
+    const $itemInfo = document.createElement('div');
+    const $itemInfoList = document.createElement('ul');
+
+    $item.className = productItemClassName;
+    $item.append($itemWrapper);
+
+    $itemWrapper.className = `${productItemClassName}__wrapper`;
+    $itemWrapper.style.background = `url(${this.product.thumbnail}) 0% 0% / cover`;
+    $itemWrapper.append($itemText, $itemButtons);
+
+    $itemText.className = `${productItemClassName}__text`;
+    $itemText.append($itemTitle, $itemInfo);
+
+    $itemInfo.className = `${productItemClassName}__info`;
+    $itemInfo.append($itemInfoList);
+
+    $itemButtons.className = `${productItemClassName}__buttons`;
+    $itemButtons.append($buttonAddToCart, $buttonDetails);
+
+    $buttonAddToCart.className = `${productItemClassName}__button`;
+    $buttonAddToCart.dataset.id = this.product.id.toString();
+    $buttonAddToCart.textContent = isOrdered ? 'Drop from cart' : 'Add to cart';
+    $buttonAddToCart.classList.add(isOrdered ? ProductPreview.classes.dropFromCart : ProductPreview.classes.addToCart);
+
+    $buttonDetails.className = `${productItemClassName}__button show-details`;
+    $buttonDetails.href = `/#${PageIds.ProductDetails}/${this.product.id}`;
+    $buttonDetails.textContent = 'Details';
+
+    $itemTitle.className = `${productItemClassName}__title`;
+    $itemTitle.textContent = this.product.title;
+
+    $itemInfoList.className = `${productItemClassName}__info-list`;
+
+    infoListKeys.forEach((key) => {
+      const $item = document.createElement('li');
+      const $label = document.createElement('span');
+      $itemInfoList.append($item);
+
+      let label: string = key;
+      label = label.slice(0, 1).toUpperCase() + label.slice(1);
+      if (key === 'discountPercentage') {
+        label = 'Discount';
+      }
+      label += ': ';
+
+      let value = this.product[key];
+      if (key === 'price') {
+        value = formatPrice(value);
+      } else if (key === 'discountPercentage') {
+        value += '%';
+      }
+
+      $item.className = `${productItemClassName}__info-list-item`;
+      $item.append($label, String(value));
+
+      $label.className = `${productItemClassName}__info-list-item-label`;
+      $label.textContent = label;
+    });
+
+    return $item;
+  }
+
+  private isOrdered() {
+    return App.getOrders()[this.product.id] !== undefined;
   }
 
   render() {

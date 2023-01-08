@@ -11,3 +11,13 @@ export interface Product {
   thumbnail: string;
   images: string[];
 }
+
+export interface Order {
+  quantity: number;
+}
+
+export type Orders = Record<string, Order>;
+
+export type PromoCodes = Record<string, { discount: number; text: string }>;
+
+export type PromoCodesKeys = (keyof PromoCodes)[];

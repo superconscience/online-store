@@ -1,8 +1,8 @@
 import { data } from '../../../data';
 import App from '../../../pages/app';
 import { Product } from '../../../types';
-import { QUERY_VALUE_SEPARATOR } from '../../../utils/constants';
-import { queryHelper } from '../../../utils/functions';
+import { PageIds, QUERY_VALUE_SEPARATOR } from '../../../utils/constants';
+import { formatPrice, queryHelper, throttle } from '../../../utils/functions';
 import Filter, { RangedFilterType, RangedItems } from '../../templates/filter';
 
 class RangedFilter extends Filter<RangedFilterType> {
@@ -20,9 +20,11 @@ class RangedFilter extends Filter<RangedFilterType> {
     const actualProducts = App.getProducts();
     const products = data.products;
     const filterType = this.filterType;
+
     const getValues = (products: Product[]) => products.map((p) => p[filterType]);
     const actualValues = getValues(actualProducts);
     const allValues = getValues(products);
+
     this.items = {
       defaultMin: Math.min(...allValues),
       defaultMax: Math.max(...allValues),
@@ -32,7 +34,6 @@ class RangedFilter extends Filter<RangedFilterType> {
   }
 
   build() {
-    const query = queryHelper();
     const defaultMinStr = this.items.defaultMin.toString();
     const defaultMaxStr = this.items.defaultMax.toString();
     const minStr = this.items.min.toString();
@@ -59,9 +60,9 @@ class RangedFilter extends Filter<RangedFilterType> {
     multirange.className = 'multi-range';
 
     fromData.className = 'from-data';
-    fromData.textContent = minStr;
+    fromData.textContent = this.label(Number(minStr));
     toData.className = 'to-data';
-    toData.textContent = maxStr;
+    toData.textContent = this.label(Number(maxStr));
 
     fromInput.type = 'range';
     fromInput.min = defaultMinStr;
@@ -78,8 +79,9 @@ class RangedFilter extends Filter<RangedFilterType> {
 
     fragment.append(header, slider);
 
-    multirange.addEventListener('change', (e) => {
-      const input = e.target;
+    const inputHandler = (event: Event) => {
+      const query = queryHelper();
+      const input = event.target;
       if (!(input instanceof HTMLInputElement)) {
         return;
       }
@@ -88,10 +90,18 @@ class RangedFilter extends Filter<RangedFilterType> {
       }
       const tuple = [Number(this.$from.value), Number(this.$to.value)].sort((a, b) => a - b);
       query.set(this.filterType, tuple.join(QUERY_VALUE_SEPARATOR));
-      query.apply();
-    });
+      query.apply(PageIds.MainPage);
+      fromData.textContent = this.label(tuple[0]);
+      toData.textContent = this.label(tuple[1]);
+    };
+
+    multirange.addEventListener('input', throttle(inputHandler, 150));
 
     return fragment;
+  }
+
+  private label(value: number) {
+    return this.filterType === 'price' ? formatPrice(value) : value.toString();
   }
 
   render() {

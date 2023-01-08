@@ -1,3 +1,4 @@
+import { PageIds } from '../../../utils/constants';
 import { debounce, queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 import Products from '../products';
@@ -16,7 +17,8 @@ class SearchBar extends Component {
   }
 
   build() {
-    const currentValue = queryHelper().get('search');
+    const query = queryHelper();
+    const currentValue = query.get('search');
     const $input = document.createElement('input');
     SearchBar.$input = $input;
 
@@ -28,11 +30,10 @@ class SearchBar extends Component {
     }
 
     const inputHandler = () => {
-      console.log('input');
-      const value = $input.value.trim();
       const query = queryHelper();
+      const value = $input.value.trim();
       query.set('search', value);
-      query.apply();
+      query.apply(PageIds.MainPage);
     };
 
     $input.addEventListener('input', debounce(inputHandler, 300));

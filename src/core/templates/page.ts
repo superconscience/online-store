@@ -3,9 +3,6 @@ abstract class Page {
   static TextObject = {};
 
   constructor() {
-    // this.container = document.createElement('div');
-    // this.container.id = id;
-    // console.log(id);
     this.container = document.createDocumentFragment();
   }
 
@@ -18,6 +15,8 @@ abstract class Page {
   render() {
     return this.container;
   }
+
+  query() {}
 }
 
 export default Page;

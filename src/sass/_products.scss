@@ -33,11 +33,7 @@
 .prev-value {
   color: aliceblue;
 }
-// .block-general {
-//   border: 1px solid orange;
-//   border-radius: 0.5rem;
-//   width: 23%;
-// }
+
 .block-general {
   position: relative;
   width: 14.6%;
@@ -60,23 +56,19 @@
 }
 
 .product-list {
-  width: 100%;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-
-  &.big {
-    .block-general {
-      width: 23%;
-      padding-top: 20%;
-    }
-  }
-}
-
-.product-list {
   padding: 0.5%;
   display: flex;
   flex-wrap: wrap;
+
+  &.big {
+    .product-preview {
+      width: 23%;
+      padding-top: 20%;
+    }
+    .product-item__info {
+      display: block;
+    }
+  }
 }
 
 .not-found {
@@ -84,4 +76,10 @@
   font-size: 200%;
   margin-top: 10%;
   color: wheat;
+}
+
+.not-found-id {
+  color: red;
+  margin: 0.5rem;
+  font-size: 120%;
 }
