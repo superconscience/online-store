@@ -6,7 +6,9 @@
   "scripts": {
     "start": "webpack serve --open --config ./webpack.config.js --env mode=dev",
     "build": "webpack --config ./webpack.config.js --env mode=prod",
-    "lint": "eslint . --ext .ts",
+    "check-types": "tsc --noEmit",
+    "eslint": "eslint --fix . --ext .ts --ext .js",
+    "lint": "npm run eslint && npm run check-types",
     "test": "jest"
   },
   "repository": {
