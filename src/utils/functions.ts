@@ -94,22 +94,6 @@ function isNoEventCallback(cb: NoEventCallback | EventCallback): cb is NoEventCa
   return !isEventCallback(cb);
 }
 
-// export function debounce(
-//   cb: DeboucedFn,
-//   wait = 20
-// ): DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback {
-//   let h: number | NodeJS.Timeout = 0;
-//   const callable = isNoEventCallback(cb)
-//     ? (...args: unknown[]) => {
-//         clearTimeout(h as NodeJS.Timeout);
-//         h = setTimeout(() => cb(...args), wait);
-//       }
-//     : (event: Event, ...args: unknown[]) => {
-//         clearTimeout(h as NodeJS.Timeout);
-//         h = setTimeout(() => cb(event, ...args), wait);
-//       };
-//   return <DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback>(<unknown>callable);
-// }
 export function debounce(cb: NoEventCallback, wait: number): NoEventCallback;
 export function debounce(cb: EventCallback, wait: number): EventCallback;
 export function debounce(
