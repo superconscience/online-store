@@ -1,9 +1,9 @@
 import moment from 'moment';
 import App from '../pages/app';
 import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
-import { QueryKey } from './types';
+import { DeboucedFn, EventCallback, NoEventCallback, QueryKey, ThrottleFn } from './types';
 
-export const locationQuery = (href?: string) => {
+export const locationQuery = (href?: string): string => {
   const parts = (href || window.location.href).split('?');
   return parts.length > 1 ? parts[parts.length - 1] : '';
 };
@@ -74,20 +74,17 @@ export const queryHelper = (href?: string) => {
 
 export const datasetHelper = () => {
   return {
-    set: <Dataset extends DOMStringMap>($element: HTMLElement, dataset: Dataset) => {
+    set: <Dataset extends DOMStringMap>($element: HTMLElement, dataset: Dataset): void => {
       Object.entries(dataset).forEach(([key, value]) => ($element.dataset[key] = value));
     },
     get: <Dataset extends DOMStringMap>(
       $element: HTMLElement,
       key: keyof Dataset extends string ? keyof Dataset : string
-    ) => {
+    ): string | undefined => {
       return $element.dataset[key];
     },
   };
 };
-
-type EventCallback = (event: Event, ...args: unknown[]) => void;
-type NoEventCallback = (...args: unknown[]) => void;
 
 function isEventCallback(cb: NoEventCallback | EventCallback): cb is EventCallback {
   return true;
@@ -97,7 +94,28 @@ function isNoEventCallback(cb: NoEventCallback | EventCallback): cb is NoEventCa
   return !isEventCallback(cb);
 }
 
-export function debounce(cb: NoEventCallback | EventCallback, wait = 20) {
+// export function debounce(
+//   cb: DeboucedFn,
+//   wait = 20
+// ): DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback {
+//   let h: number | NodeJS.Timeout = 0;
+//   const callable = isNoEventCallback(cb)
+//     ? (...args: unknown[]) => {
+//         clearTimeout(h as NodeJS.Timeout);
+//         h = setTimeout(() => cb(...args), wait);
+//       }
+//     : (event: Event, ...args: unknown[]) => {
+//         clearTimeout(h as NodeJS.Timeout);
+//         h = setTimeout(() => cb(event, ...args), wait);
+//       };
+//   return <DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback>(<unknown>callable);
+// }
+export function debounce(cb: NoEventCallback, wait: number): NoEventCallback;
+export function debounce(cb: EventCallback, wait: number): EventCallback;
+export function debounce(
+  cb: DeboucedFn,
+  wait = 20
+): DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback {
   let h: number | NodeJS.Timeout = 0;
   const callable = isNoEventCallback(cb)
     ? (...args: unknown[]) => {
@@ -108,10 +126,15 @@ export function debounce(cb: NoEventCallback | EventCallback, wait = 20) {
         clearTimeout(h as NodeJS.Timeout);
         h = setTimeout(() => cb(event, ...args), wait);
       };
-  return <NoEventCallback | EventCallback>(<unknown>callable);
+  return <DeboucedFn extends NoEventCallback ? NoEventCallback : EventCallback>(<unknown>callable);
 }
 
-export function throttle(cb: NoEventCallback | EventCallback, delay?: number) {
+export function throttle(cb: NoEventCallback, delay?: number): NoEventCallback;
+export function throttle(cb: EventCallback, delay?: number): EventCallback;
+export function throttle(
+  cb: ThrottleFn,
+  delay?: number
+): ThrottleFn extends NoEventCallback ? NoEventCallback : EventCallback {
   delay || (delay = 100);
   let throttle: boolean | number | NodeJS.Timeout = false;
 
@@ -205,7 +228,7 @@ export const validatePhoneInput = (input: string): boolean => {
   return input.length > 1 ? input.split('').every((x) => regExp.test(x)) : regExp.test(input);
 };
 
-export const validateCardDate = (input: string) => {
+export const validateCardDate = (input: string): boolean => {
   const [d1, d2, sep, d3, d4] = input.split('');
   sep && 0;
   if ([d1, d2, d3, d4].some((x) => !/^[0-9]{1,1}$/.test(x))) {
@@ -217,7 +240,7 @@ export const validateCardDate = (input: string) => {
   return creditCardDate.isValid() && today < creditCardDate.add(1, 'months');
 };
 
-export const isValidQueryParams = () => {
+export const isValidQueryParams = (): boolean => {
   const query = queryHelper();
   const validParamNames: QueryKey[] = ['big', 'brand', 'category', 'limit', 'page', 'price', 'search', 'sort', 'stock'];
   return [...query.entries()].every(([p]) => validParamNames.some((vp) => vp === p));

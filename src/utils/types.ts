@@ -8,3 +8,9 @@ export type Query = Partial<
 >;
 
 export type QueryKey = keyof Query;
+
+export type EventCallback = (event: Event, ...args: unknown[]) => void;
+export type NoEventCallback = (...args: unknown[]) => void;
+
+export type DeboucedFn = EventCallback | NoEventCallback;
+export type ThrottleFn = DeboucedFn;
