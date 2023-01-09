@@ -13,7 +13,8 @@ import {
 } from './functions';
 import moment from 'moment';
 import { rnd } from '../test/utils';
-import { DeboucedFn, NoEventCallback } from './types';
+
+jest.useFakeTimers();
 
 let counter = 1;
 const createTitle = (text: string) => `${counter++}) ${text}`;
@@ -131,7 +132,7 @@ describe('Util functions', () => {
     }
 
     jest.runAllTimers();
-    expect(func).toBeCalledTimes(1);
+    expect(func).toBeCalledTimes(2);
   });
 
   it(createTitle('debounce should return a debounced callback which executes just once a set period'), () => {
@@ -143,6 +144,6 @@ describe('Util functions', () => {
     }
 
     jest.runAllTimers();
-    expect(func).toBeCalledTimes(0);
+    expect(func).toBeCalledTimes(1);
   });
 });
