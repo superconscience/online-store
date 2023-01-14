@@ -39,7 +39,7 @@ class CheckboxLine extends Component {
     checkbox.checked = query.get(this.filterType)?.split(QUERY_VALUE_SEPARATOR).includes(this.filterName) || false;
     label.setAttribute('for', this.title);
     label.className = CheckboxLine.classes.label;
-    label.textContent = `${this.title}`;
+    label.textContent = this.title;
     info.className = CheckboxLine.classes.info;
     info.textContent = `(${this.available}/${this.total})`;
     fragment.append(checkbox, label, info);

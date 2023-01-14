@@ -43,7 +43,7 @@ class RangedFilter extends Filter<RangedFilterType> {
     const slider = document.createElement('div');
     const header = document.createElement('h3');
     const outData = document.createElement('div');
-    const multirange = document.createElement('div');
+    const multiRange = document.createElement('div');
     const fromData = document.createElement('div');
     const toData = document.createElement('div');
     const fromInput = document.createElement('input');
@@ -57,7 +57,7 @@ class RangedFilter extends Filter<RangedFilterType> {
     header.textContent = this.filterName;
 
     outData.className = 'out-data';
-    multirange.className = 'multi-range';
+    multiRange.className = 'multi-range';
 
     fromData.className = 'from-data';
     fromData.textContent = this.label(Number(minStr));
@@ -73,9 +73,13 @@ class RangedFilter extends Filter<RangedFilterType> {
     toInput.max = defaultMaxStr;
     toInput.value = maxStr;
 
-    Number.isFinite(this.items.min) ? outData.append(fromData, ' ⟷ ', toData) : outData.append('NOT FOUND');
-    multirange.append(fromInput, toInput);
-    slider.append(outData, multirange);
+    if (Number.isFinite(this.items.min)) {
+      outData.append(fromData, ' ⟷ ', toData);
+    } else {
+      outData.append('NOT FOUND');
+    }
+    multiRange.append(fromInput, toInput);
+    slider.append(outData, multiRange);
 
     fragment.append(header, slider);
 
@@ -95,7 +99,7 @@ class RangedFilter extends Filter<RangedFilterType> {
       toData.textContent = this.label(tuple[1]);
     };
 
-    multirange.addEventListener('input', throttle(inputHandler, 150));
+    multiRange.addEventListener('input', throttle(inputHandler, 150));
 
     return fragment;
   }
