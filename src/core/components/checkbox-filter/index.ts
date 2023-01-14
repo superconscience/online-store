@@ -2,15 +2,15 @@ import { data } from '../../../data';
 import App from '../../../pages/app';
 import { PageIds } from '../../../utils/constants';
 import { queryHelper } from '../../../utils/functions';
-import Filter, { CheckboxedFilterType, CheckboxedItems } from '../../templates/filter';
+import Filter, { CheckboxFilterType, CheckboxItems } from '../../templates/filter';
 import CheckboxLine from '../checkbox-line';
 
-class CheckboxedFilter extends Filter<CheckboxedFilterType> {
+class CheckboxFilter extends Filter<CheckboxFilterType> {
   private checkboxLineComponentList: CheckboxLine[] = [];
   private checkboxLineList: HTMLElement[] = [];
-  private items: CheckboxedItems = {};
+  private items: CheckboxItems = {};
 
-  constructor(filterType: CheckboxedFilterType) {
+  constructor(filterType: CheckboxFilterType) {
     const className = `${filterType}-filter`;
     super(filterType, 'div', className);
     this.fillItems();
@@ -107,4 +107,4 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
   }
 }
 
-export default CheckboxedFilter;
+export default CheckboxFilter;

@@ -3,11 +3,11 @@ import Component from './components';
 
 type ProductKey = keyof Product;
 
-export type FilterType = CheckboxedFilterType | RangedFilterType;
-export type CheckboxedFilterType = Extract<ProductKey, 'category' | 'brand'>;
+export type FilterType = CheckboxFilterType | RangedFilterType;
+export type CheckboxFilterType = Extract<ProductKey, 'category' | 'brand'>;
 export type RangedFilterType = Extract<ProductKey, 'price' | 'stock'>;
 
-export type CheckboxedItems = Record<string, { total: number; actual: number }>;
+export type CheckboxItems = Record<string, { total: number; actual: number }>;
 export type RangedItems = { defaultMin: number; defaultMax: number; min: number; max: number };
 
 abstract class Filter<T extends FilterType> extends Component {

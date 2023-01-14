@@ -2,12 +2,12 @@ import App from '../../../pages/app';
 import { PageIds } from '../../../utils/constants';
 import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
-import CheckboxedFilter from '../checkboxed-filter';
+import CheckboxFilter from '../checkbox-filter';
 import RangedFilter from '../ranged-filter';
 
 class Sidebar extends Component {
-  $categoryFilter = new CheckboxedFilter('category').render();
-  $brandFilter = new CheckboxedFilter('brand').render();
+  $categoryFilter = new CheckboxFilter('category').render();
+  $brandFilter = new CheckboxFilter('brand').render();
   $priceFilter = new RangedFilter('price').render();
   $stockFilter = new RangedFilter('stock').render();
 
@@ -104,11 +104,11 @@ class Sidebar extends Component {
   }
 
   refreshCategoryFilter(): void {
-    this.$categoryFilter = replaceWith(this.$categoryFilter, new CheckboxedFilter('category').render());
+    this.$categoryFilter = replaceWith(this.$categoryFilter, new CheckboxFilter('category').render());
   }
 
   refreshBrandFilter(): void {
-    this.$brandFilter = replaceWith(this.$brandFilter, new CheckboxedFilter('brand').render());
+    this.$brandFilter = replaceWith(this.$brandFilter, new CheckboxFilter('brand').render());
   }
 
   refreshPriceFilter(): void {

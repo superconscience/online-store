@@ -1,12 +1,12 @@
 import { QUERY_VALUE_SEPARATOR } from '../../../utils/constants';
 import { queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
-import { CheckboxedFilterType } from '../../templates/filter';
+import { CheckboxFilterType } from '../../templates/filter';
 
 const checkBoxLineClassName = 'checkbox-line';
 
 class CheckboxLine extends Component {
-  readonly filterType: CheckboxedFilterType;
+  readonly filterType: CheckboxFilterType;
   readonly title: string;
   readonly filterName: string;
   readonly total: number;
@@ -18,7 +18,7 @@ class CheckboxLine extends Component {
     info: `${checkBoxLineClassName}__info`,
   };
 
-  constructor(filterType: CheckboxedFilterType, filterName: string, total: number, available = total) {
+  constructor(filterType: CheckboxFilterType, filterName: string, total: number, available = total) {
     super('li', CheckboxLine.classes.checkboxLine);
     this.filterType = filterType;
     this.title = filterName.slice(0, 1).toUpperCase() + filterName.slice(1);
