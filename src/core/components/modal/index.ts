@@ -328,8 +328,8 @@ class ModalItem extends Component {
         placeholder="Name" formcontrolname="personName" class="inp-name input-item"></div>`;
     templatePersonData += ` <div class="phone-name form-item"><input type="text" name="phone"
         placeholder="Phone number" formcontrolname="phoneNumber" class="inp-phone-num input-item"></div>`;
-    templatePersonData += `<div class="adress form-item"><input  type="text" name="address"
-        placeholder="Delivery address" formcontrolname="adress" class="inp-adress input-item"></div>`;
+    templatePersonData += `<div class="address form-item"><input  type="text" name="address"
+        placeholder="Delivery address" formcontrolname="address" class="inp-address input-item"></div>`;
     templatePersonData += `<div class="email form-item"><input type="text" name="email"
         placeholder="E-mail" formcontrolname="email" class="inp-email input-item"></div>`;
     templateCartData += `<h2 class="modal-title-cart">Credit card details</h2>`;

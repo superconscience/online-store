@@ -1,11 +1,11 @@
 import { Product } from '../../types';
 import Component from './components';
 
-type ProuductKey = keyof Product;
+type ProductKey = keyof Product;
 
 export type FilterType = CheckboxedFilterType | RangedFilterType;
-export type CheckboxedFilterType = Extract<ProuductKey, 'category' | 'brand'>;
-export type RangedFilterType = Extract<ProuductKey, 'price' | 'stock'>;
+export type CheckboxedFilterType = Extract<ProductKey, 'category' | 'brand'>;
+export type RangedFilterType = Extract<ProductKey, 'price' | 'stock'>;
 
 export type CheckboxedItems = Record<string, { total: number; actual: number }>;
 export type RangedItems = { defaultMin: number; defaultMax: number; min: number; max: number };
