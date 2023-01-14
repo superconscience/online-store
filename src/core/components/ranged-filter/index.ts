@@ -19,11 +19,9 @@ class RangedFilter extends Filter<RangedFilterType> {
   fillItems(): void {
     const actualProducts = App.getProducts();
     const products = data.products;
-    const filterType = this.filterType;
 
-    const getValues = (products: Product[]): number[] => products.map((p) => p[filterType]);
-    const actualValues = getValues(actualProducts);
-    const allValues = getValues(products);
+    const actualValues = this.getFilterValues(actualProducts);
+    const allValues = this.getFilterValues(products);
 
     this.items = {
       defaultMin: Math.min(...allValues),
@@ -31,6 +29,10 @@ class RangedFilter extends Filter<RangedFilterType> {
       min: Math.min(...actualValues),
       max: Math.max(...actualValues),
     };
+  }
+
+  private getFilterValues(products: Product[]): number[] {
+    return products.map((p) => p[this.filterType]);
   }
 
   build(): DocumentFragment {
