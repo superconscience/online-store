@@ -19,7 +19,7 @@ class ViewMode extends Component {
     super('div', ViewMode.classes.viewMode);
   }
 
-  build() {
+  build(): DocumentFragment {
     const query = queryHelper();
     const $fragment = document.createDocumentFragment();
     const $big = document.createElement('div');
@@ -73,7 +73,7 @@ class ViewMode extends Component {
     return $fragment;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

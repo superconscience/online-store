@@ -12,7 +12,7 @@ class ErrorPage extends Page {
     this.errorType = errorType;
   }
 
-  build() {
+  build(): HTMLDivElement {
     const $notFound = document.createElement('div');
     const $message = document.createElement('h1');
 
@@ -26,7 +26,7 @@ class ErrorPage extends Page {
     return $notFound;
   }
 
-  render() {
+  render(): DocumentFragment {
     this.container.append(this.build());
     return this.container;
   }

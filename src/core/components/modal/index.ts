@@ -62,7 +62,7 @@ const isCardInputName = (name: string): name is CardInputName => {
   return name === FormField.CardNumber || name === FormField.CardDate || name === FormField.CardCvv;
 };
 
-const errorSpanHtml = (name: string) => `<span class="error-field-name">${name}</span>`;
+const errorSpanHtml = (name: string): string => `<span class="error-field-name">${name}</span>`;
 
 const onPersonalValidationFail: PersonalValidateFailFunc = ($element, errorFactory, errorMessage) => {
   const $error = errorFactory(errorMessage);
@@ -77,9 +77,9 @@ const onCardValidationFail: CardValidateFailFunc = ($element, $errorContainer, e
   $element.setCustomValidity(errorMessage);
 };
 
-const inputFilter = (input: string) => /\w/.test(input) || input === '';
-const onlyNumbersFilter = (input: string) => /^\d*$/.test(input);
-const cardDateFilter = (input: string) => /^[0-9/]*$/.test(input);
+const inputFilter = (input: string): boolean => /\w/.test(input) || input === '';
+const onlyNumbersFilter = (input: string): boolean => /^\d*$/.test(input);
+const cardDateFilter = (input: string): boolean => /^[0-9/]*$/.test(input);
 
 const clipInput = ($target: HTMLInputElement, limit: number): string => {
   const selectionStart = $target.selectionStart;
@@ -136,7 +136,7 @@ const validation: Record<
     errorMessage: `${errorSpanHtml('E-mail')} is not valid`,
   },
   cardnumber: {
-    formValidateFunc: (input: string) => /^\d{16,16}$/.test(input),
+    formValidateFunc: (input: string): boolean => /^\d{16,16}$/.test(input),
     onFormValidationFail: onCardValidationFail,
     errorMessage: `${errorSpanHtml('Card number')} must contain 16 digits`,
     filterFunc: onlyNumbersFilter,
@@ -227,7 +227,7 @@ const validation: Record<
     },
   },
   cardcvv: {
-    formValidateFunc: (input: string) => /^\d{3,3}$/.test(input),
+    formValidateFunc: (input: string): boolean => /^\d{3,3}$/.test(input),
     onFormValidationFail: onCardValidationFail,
     errorMessage: `${errorSpanHtml('Card CVV')} must contain only 3 digits`,
     filterFunc: onlyNumbersFilter,
@@ -306,7 +306,7 @@ class ModalItem extends Component {
     super(tagName, className);
   }
 
-  build() {
+  build(): DocumentFragment {
     let templatePersonData = '';
     let templateCartData = '';
     const $fragment = document.createDocumentFragment();
@@ -473,13 +473,13 @@ class ModalItem extends Component {
     return $fragment;
   }
 
-  buildCardErrorContainer() {
+  buildCardErrorContainer(): HTMLDivElement {
     const $container = document.createElement('div');
     $container.className = ModalItem.classes.cardError;
     return $container;
   }
 
-  buildErrorMessage(message: string) {
+  buildErrorMessage(message: string): HTMLDivElement {
     const $error = document.createElement('div');
     $error.className = ModalItem.classes.errorMessage;
     $error.innerHTML = message;
@@ -487,7 +487,7 @@ class ModalItem extends Component {
     return $error;
   }
 
-  buildCardErrorMessage(message: string, name: CardErrorMessageDataset['name']) {
+  buildCardErrorMessage(message: string, name: CardErrorMessageDataset['name']): HTMLDivElement {
     const dataset = datasetHelper();
     const $error = document.createElement('div');
     $error.className = ModalItem.classes.errorMessage;
@@ -497,7 +497,7 @@ class ModalItem extends Component {
     return $error;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
 
     this.container.addEventListener('click', (event) => {

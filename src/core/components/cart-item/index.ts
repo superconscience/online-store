@@ -45,7 +45,7 @@ class CartItem extends Component {
     this.id = productId;
   }
 
-  build() {
+  build(): HTMLElement {
     const dataset = datasetHelper();
     const product = this.product;
     const order = this.order;
@@ -143,7 +143,7 @@ class CartItem extends Component {
     return $wrapper;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

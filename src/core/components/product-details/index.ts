@@ -18,7 +18,7 @@ class ProductDetails extends Component {
     this.$orderButton = this.buildOrderButton();
   }
 
-  generateLinkNavigation() {
+  generateLinkNavigation(): DocumentFragment {
     const linkBlock = document.createDocumentFragment();
     const linkNavigation = document.createElement('div');
     linkNavigation.className = 'link-navigation';
@@ -30,7 +30,7 @@ class ProductDetails extends Component {
     return linkBlock;
   }
 
-  generateDetail() {
+  generateDetail(): DocumentFragment {
     const dataset = datasetHelper();
     const $blockDetails = document.createDocumentFragment();
     const $productDetail = document.createElement('div');
@@ -121,7 +121,7 @@ class ProductDetails extends Component {
     return $blockDetails;
   }
 
-  buildGrandImage(src: string) {
+  buildGrandImage(src: string): HTMLImageElement {
     const $img = document.createElement('img');
 
     $img.className = 'img-big';
@@ -131,7 +131,7 @@ class ProductDetails extends Component {
     return $img;
   }
 
-  buildSlideImage(src: string, index: number) {
+  buildSlideImage(src: string, index: number): HTMLImageElement {
     const dataset = datasetHelper();
     const $img = document.createElement('img');
 
@@ -143,7 +143,7 @@ class ProductDetails extends Component {
     return $img;
   }
 
-  buildOrderButton() {
+  buildOrderButton(): HTMLButtonElement {
     const $button = document.createElement('button');
     const productId = this.product.id;
     const isOrdered = App.isProductOrdered(productId);
@@ -163,7 +163,7 @@ class ProductDetails extends Component {
     return $button;
   }
 
-  buildBuyButton() {
+  buildBuyButton(): HTMLButtonElement {
     const productId = this.product.id;
     const isOrdered = App.isProductOrdered(productId);
     const $button = document.createElement('button');
@@ -181,11 +181,11 @@ class ProductDetails extends Component {
     return $button;
   }
 
-  refreshOrderButton() {
+  refreshOrderButton(): void {
     this.$orderButton = replaceWith(this.$orderButton, this.buildOrderButton());
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.generateLinkNavigation(), this.generateDetail());
     return this.container;
   }

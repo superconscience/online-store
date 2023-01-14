@@ -12,6 +12,10 @@ export interface Product {
   images: string[];
 }
 
+export type ProductsMap = {
+  [k: string]: Product;
+};
+
 export interface Order {
   quantity: number;
 }

@@ -21,7 +21,7 @@ class ProductPreview extends Component {
     }
   }
 
-  build() {
+  build(): HTMLDivElement {
     const infoListKeys: Extract<
       keyof Product,
       'category' | 'brand' | 'price' | 'discountPercentage' | 'rating' | 'stock'
@@ -96,11 +96,7 @@ class ProductPreview extends Component {
     return $item;
   }
 
-  private isOrdered() {
-    return App.getOrders()[this.product.id] !== undefined;
-  }
-
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

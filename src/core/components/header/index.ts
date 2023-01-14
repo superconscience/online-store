@@ -8,7 +8,7 @@ class Header extends Component {
     super('header', 'header');
   }
 
-  build() {
+  build(): DocumentFragment {
     const $fragment = document.createDocumentFragment();
     const $brand = document.createElement('a');
     const $totalPrice = document.createElement('div');
@@ -30,7 +30,7 @@ class Header extends Component {
     return $fragment;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

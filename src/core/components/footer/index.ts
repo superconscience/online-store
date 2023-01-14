@@ -5,7 +5,7 @@ class Footer extends Component {
     super('footer', 'footer');
   }
 
-  build() {
+  build(): HTMLDivElement {
     const $wrapper = document.createElement('div');
     const $cp = document.createElement('p');
     const $links = document.createElement('ul');
@@ -29,7 +29,7 @@ class Footer extends Component {
     return $wrapper;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

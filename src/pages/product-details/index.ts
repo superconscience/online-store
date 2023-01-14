@@ -12,7 +12,7 @@ class ProductDetailsPage extends Page {
     this.productId = this.getProductId();
   }
 
-  private initProduct() {
+  private initProduct(): Product | null {
     const productId = this.getProductId();
 
     if (!productsMap[productId]) {
@@ -22,13 +22,13 @@ class ProductDetailsPage extends Page {
     return productsMap[productId];
   }
 
-  private getProductId() {
+  private getProductId(): string {
     const parts = window.location.hash.slice(1).split('/');
     const productId = parts[1];
     return productId;
   }
 
-  build() {
+  build(): HTMLDivElement {
     const detailBlock = document.createElement('div');
     detailBlock.className = 'detail-block';
     if (this.product) {
@@ -39,7 +39,7 @@ class ProductDetailsPage extends Page {
     return detailBlock;
   }
 
-  buildNotFound() {
+  buildNotFound(): HTMLDivElement {
     const $notFound = document.createElement('div');
     let html: string;
 
@@ -56,7 +56,7 @@ class ProductDetailsPage extends Page {
     return $notFound;
   }
 
-  render() {
+  render(): DocumentFragment {
     this.container.append(this.build());
     return this.container;
   }

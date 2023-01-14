@@ -6,17 +6,17 @@ abstract class Page {
     this.container = document.createDocumentFragment();
   }
 
-  protected createHeaderTitle(text: string) {
+  protected createHeaderTitle(text: string): HTMLHeadingElement {
     const headerTitle = document.createElement('h1');
     headerTitle.innerText = text;
     return headerTitle;
   }
 
-  render() {
+  render(): DocumentFragment {
     return this.container;
   }
 
-  query() {}
+  query(): void {}
 }
 
 export default Page;

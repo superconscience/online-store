@@ -10,11 +10,11 @@ export type RangedFilterType = Extract<ProuductKey, 'price' | 'stock'>;
 export type CheckboxedItems = Record<string, { total: number; actual: number }>;
 export type RangedItems = { defaultMin: number; defaultMax: number; min: number; max: number };
 
-abstract class Filter<FT extends FilterType> extends Component {
-  protected readonly filterType: FT;
+abstract class Filter<T extends FilterType> extends Component {
+  protected readonly filterType: T;
   protected readonly filterName: string;
 
-  constructor(filterType: FT, tagName = 'div', className = '') {
+  constructor(filterType: T, tagName = 'div', className = '') {
     super(tagName, className);
     this.filterType = filterType;
     this.filterName = filterType.slice(0, 1).toUpperCase() + filterType.slice(1).toLowerCase();

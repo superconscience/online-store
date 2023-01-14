@@ -36,7 +36,7 @@ class SortBar extends Component {
     super('div', `${Products.classes.sortBar} ${SortBar.classes.sortBar}`);
   }
 
-  build() {
+  build(): HTMLSelectElement {
     const currentSortValue = queryHelper().get('sort');
     const $select = document.createElement('select');
     const $headOption = document.createElement('option');
@@ -71,7 +71,7 @@ class SortBar extends Component {
     return $select;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

@@ -8,9 +8,9 @@ type CartQueryParams = Record<Extract<QueryKey, 'page' | 'limit'>, string>;
 type PageButtonDataset = { page: string };
 
 const cartPageControlClassName = 'cart-page-control';
-const elementClassName = (element: string) => `${cartPageControlClassName}__${element}`;
+const elementClassName = (element: string): string => `${cartPageControlClassName}__${element}`;
 
-const getPagesCount = (limit: number, itemsCount?: number) => {
+const getPagesCount = (limit: number, itemsCount?: number): number => {
   return Math.ceil((itemsCount === undefined ? App.getOrdersProductsQuantity() : itemsCount) / limit);
 };
 
@@ -37,7 +37,7 @@ class CartPageControl extends Component {
   };
   private _pages = 0;
 
-  private get params() {
+  private get params(): CartQueryParams {
     return this._params;
   }
 
@@ -47,11 +47,11 @@ class CartPageControl extends Component {
     this.refreshLimitInput();
   }
 
-  getParams() {
+  getParams(): CartQueryParams {
     return this.params;
   }
 
-  get pages() {
+  get pages(): number {
     return this._pages;
   }
 
@@ -67,7 +67,7 @@ class CartPageControl extends Component {
     this.useQuery();
   }
 
-  build() {
+  build(): DocumentFragment {
     const $fragment = document.createDocumentFragment();
 
     $fragment.append(this.$limit, this.$numbers);
@@ -75,7 +75,7 @@ class CartPageControl extends Component {
     return $fragment;
   }
 
-  buildLimit() {
+  buildLimit(): HTMLDivElement {
     const $root = document.createElement('div');
     const $input = this.buildLimitInput();
     this.$limitInput = this.$limitInput ? replaceWith(this.$limitInput, $input) : $input;
@@ -86,7 +86,7 @@ class CartPageControl extends Component {
     return $root;
   }
 
-  buildLimitInput() {
+  buildLimitInput(): HTMLInputElement {
     const limit = this.params.limit.toString();
     const $input = document.createElement('input');
     $input.className = CartPageControl.classes.limitInput;
@@ -114,7 +114,7 @@ class CartPageControl extends Component {
     return $input;
   }
 
-  buildNumbers() {
+  buildNumbers(): HTMLDivElement {
     const dataset = datasetHelper();
     const $root = document.createElement('div');
     const $buttonNext = document.createElement('button');
@@ -162,27 +162,27 @@ class CartPageControl extends Component {
     return $root;
   }
 
-  refreshLimit() {
+  refreshLimit(): void {
     this.$limit = replaceWith(this.$limit, this.buildLimit());
   }
 
-  refreshLimitInput() {
+  refreshLimitInput(): void {
     if (this.$limitInput) {
       this.$limitInput.max = App.getOrdersProductsQuantity().toString();
       this.$limitInput.value = this.params.limit;
     }
   }
 
-  refreshNumbers() {
+  refreshNumbers(): void {
     this.$numbers = replaceWith(this.$numbers, this.buildNumbers());
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }
 
-  useQuery() {
+  useQuery(): void {
     const query = queryHelper();
     const limit = query.get('limit') || defaultParams.limit;
     const page = query.get('page') || defaultParams.page;

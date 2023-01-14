@@ -86,6 +86,6 @@ const assessment =
 - [x] Страница не реагирует на некорректные query-параметры +4
   - [x] при появлении необрабатываемых(в вашем коде) query-параметров, страница не открывается. Например, 'https://your-deploy.com/?rgfg=dfoh'. Если в вашем случае параметр '?rgfg=dfoh' некорректен, то он не должен направлять на страницу 404 4 `;
 
-export const logAssessment = () => {
+export const logAssessment = (): void => {
   console.log(assessment);
 };

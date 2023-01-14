@@ -26,7 +26,7 @@ class MainPage extends Page {
     this.$products = products.render();
   }
 
-  render() {
+  render(): DocumentFragment {
     const $root = document.createElement('div');
     $root.className = 'store';
     $root.append(this.$sidebar, this.$products);
@@ -34,17 +34,17 @@ class MainPage extends Page {
     return this.container;
   }
 
-  refreshSidebar() {
+  refreshSidebar(): void {
     this.sidebar = new Sidebar();
     this.$sidebar = replaceWith(this.$sidebar, this.sidebar.render());
   }
 
-  refreshProducts() {
+  refreshProducts(): void {
     this.products = new Products();
     this.$products = replaceWith(this.$products, this.products.render());
   }
 
-  refreshOnQuery() {
+  refreshOnQuery(): void {
     const [prevHref, currentHref] = App.getHistory();
 
     const prevQuery = queryHelper(prevHref);
@@ -109,12 +109,12 @@ class MainPage extends Page {
     }
   }
 
-  query() {
+  query(): void {
     this.useQuery();
     this.refreshOnQuery();
   }
 
-  useQuery() {
+  useQuery(): void {
     const query = queryHelper();
     const category = query.get('category');
     const brand = query.get('brand');
@@ -178,7 +178,7 @@ class MainPage extends Page {
       const isOrder = (value: string): value is Order => {
         return value === 'ASC' || value === 'DESC';
       };
-      const sortHandler = (a: Product, b: Product, key: keyof typeof sortMap, order: Order) => {
+      const sortHandler = (a: Product, b: Product, key: keyof typeof sortMap, order: Order): number => {
         const itemKey = sortMap[key];
         return order === 'ASC'
           ? a[itemKey] - b[itemKey]

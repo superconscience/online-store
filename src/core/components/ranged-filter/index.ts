@@ -16,12 +16,12 @@ class RangedFilter extends Filter<RangedFilterType> {
     this.fillItems();
   }
 
-  fillItems() {
+  fillItems(): void {
     const actualProducts = App.getProducts();
     const products = data.products;
     const filterType = this.filterType;
 
-    const getValues = (products: Product[]) => products.map((p) => p[filterType]);
+    const getValues = (products: Product[]): number[] => products.map((p) => p[filterType]);
     const actualValues = getValues(actualProducts);
     const allValues = getValues(products);
 
@@ -33,7 +33,7 @@ class RangedFilter extends Filter<RangedFilterType> {
     };
   }
 
-  build() {
+  build(): DocumentFragment {
     const defaultMinStr = this.items.defaultMin.toString();
     const defaultMaxStr = this.items.defaultMax.toString();
     const minStr = this.items.min.toString();
@@ -79,7 +79,7 @@ class RangedFilter extends Filter<RangedFilterType> {
 
     fragment.append(header, slider);
 
-    const inputHandler = (event: Event) => {
+    const inputHandler: EventListener = (event) => {
       const query = queryHelper();
       const input = event.target;
       if (!(input instanceof HTMLInputElement)) {
@@ -100,11 +100,11 @@ class RangedFilter extends Filter<RangedFilterType> {
     return fragment;
   }
 
-  private label(value: number) {
+  private label(value: number): string {
     return this.filterType === 'price' ? formatPrice(value) : value.toString();
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

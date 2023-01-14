@@ -15,7 +15,7 @@ class Sidebar extends Component {
     super('div', 'sidebar');
   }
 
-  build() {
+  build(): HTMLDivElement {
     const query = queryHelper();
 
     const $filters = document.createElement('div');
@@ -65,7 +65,7 @@ class Sidebar extends Component {
     return $filters;
   }
 
-  refresh() {
+  refresh(): void {
     const [prevHref, currentHref] = App.getHistory();
 
     const prevQuery = queryHelper(prevHref);
@@ -103,23 +103,23 @@ class Sidebar extends Component {
     }
   }
 
-  refreshCategoryFilter() {
+  refreshCategoryFilter(): void {
     this.$categoryFilter = replaceWith(this.$categoryFilter, new CheckboxedFilter('category').render());
   }
 
-  refreshBrandFilter() {
+  refreshBrandFilter(): void {
     this.$brandFilter = replaceWith(this.$brandFilter, new CheckboxedFilter('brand').render());
   }
 
-  refreshPriceFilter() {
+  refreshPriceFilter(): void {
     this.$priceFilter = replaceWith(this.$priceFilter, new RangedFilter('price').render());
   }
 
-  refreshStockFilter() {
+  refreshStockFilter(): void {
     this.$stockFilter = replaceWith(this.$stockFilter, new RangedFilter('stock').render());
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

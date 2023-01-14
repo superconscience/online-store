@@ -32,7 +32,7 @@ class Products extends Component {
     this.$stat = this.buildStat();
   }
 
-  build() {
+  build(): DocumentFragment {
     const $fragment = document.createDocumentFragment();
     const $productList = this.$productList;
     const $header = document.createElement('div');
@@ -46,7 +46,7 @@ class Products extends Component {
     return $fragment;
   }
 
-  buildProductList() {
+  buildProductList(): HTMLElement {
     const actualProducts = App.getProducts();
     if (actualProducts.length === 0) {
       const $notFound = document.createElement('div');
@@ -99,7 +99,7 @@ class Products extends Component {
     return $productList;
   }
 
-  buildStat() {
+  buildStat(): HTMLDivElement {
     const actualProducts = App.getProducts();
     const $stat = document.createElement('div');
 
@@ -110,16 +110,16 @@ class Products extends Component {
     return $stat;
   }
 
-  refreshProductList() {
+  refreshProductList(): void {
     this.$productList = replaceWith(this.$productList, this.buildProductList());
     this.$stat = replaceWith(this.$stat, this.buildStat());
   }
 
-  refreshViewMode() {
+  refreshViewMode(): void {
     this.$viewMode = replaceWith(this.$viewMode, new ViewMode().render());
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

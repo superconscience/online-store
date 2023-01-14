@@ -16,7 +16,7 @@ class SearchBar extends Component {
     super('div', `${Products.classes.searchBar} ${SearchBar.classes.searchBar}`);
   }
 
-  build() {
+  build(): HTMLInputElement {
     const query = queryHelper();
     const currentValue = query.get('search');
     const $input = document.createElement('input');
@@ -29,7 +29,7 @@ class SearchBar extends Component {
       $input.value = currentValue;
     }
 
-    const inputHandler = () => {
+    const inputHandler: EventListener = () => {
       const query = queryHelper();
       const value = $input.value.trim();
       query.set('search', value);
@@ -41,7 +41,7 @@ class SearchBar extends Component {
     return $input;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

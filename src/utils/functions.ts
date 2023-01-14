@@ -1,20 +1,20 @@
 import moment from 'moment';
 import App from '../pages/app';
 import { PageIds, QUERY_VALUE_SEPARATOR } from './constants';
-import { DeboucedFn, EventCallback, NoEventCallback, QueryKey, ThrottleFn } from './types';
+import { DatasetHelper, DeboucedFn, EventCallback, NoEventCallback, QueryHelper, QueryKey, ThrottleFn } from './types';
 
 export const locationQuery = (href?: string): string => {
   const parts = (href || window.location.href).split('?');
   return parts.length > 1 ? parts[parts.length - 1] : '';
 };
 
-export const queryHelper = (href?: string) => {
+export const queryHelper = (href?: string): QueryHelper => {
   const lq = locationQuery(href);
   const query = new URLSearchParams(lq);
   const helper = {
-    get: (key: QueryKey) => query.get(key),
+    get: (key: QueryKey): string | null => query.get(key),
 
-    set: (key: QueryKey, value: string) => {
+    set: (key: QueryKey, value: string): void => {
       if (value !== '') {
         query.set(key, value);
       } else {
@@ -22,9 +22,9 @@ export const queryHelper = (href?: string) => {
       }
     },
 
-    has: (key: QueryKey) => query.has(key),
+    has: (key: QueryKey): boolean => query.has(key),
 
-    add: (key: QueryKey, value: string) => {
+    add: (key: QueryKey, value: string): void => {
       const currentValue = query.get(key);
 
       if (currentValue === null) {
@@ -34,7 +34,7 @@ export const queryHelper = (href?: string) => {
       }
     },
 
-    remove: (key: QueryKey, value: string) => {
+    remove: (key: QueryKey, value: string): void => {
       const currentValue = query.get(key);
       if (currentValue !== null) {
         const newValue = currentValue
@@ -55,16 +55,16 @@ export const queryHelper = (href?: string) => {
       }
     },
 
-    removeFilters: () => {
+    removeFilters: (): void => {
       const keys: QueryKey[] = ['category', 'brand', 'price', 'stock', 'sort', 'search'];
       keys.forEach((k) => query.delete(k));
     },
 
-    entries: () => query.entries(),
+    entries: (): IterableIterator<[string, string]> => query.entries(),
 
-    toString: () => query.toString().replace(/%E2%86%95/g, QUERY_VALUE_SEPARATOR),
+    toString: (): string => query.toString().replace(/%E2%86%95/g, QUERY_VALUE_SEPARATOR),
 
-    apply: (pageId?: PageIds, search = query.toString()) => {
+    apply: (pageId?: PageIds, search = query.toString()): void => {
       window.location.href = `#${pageId ? pageId : App.pageId}${search ? '?' + search : ''}`;
     },
   };
@@ -72,7 +72,7 @@ export const queryHelper = (href?: string) => {
   return helper;
 };
 
-export const datasetHelper = () => {
+export const datasetHelper = (): DatasetHelper => {
   return {
     set: <Dataset extends DOMStringMap>($element: HTMLElement, dataset: Dataset): void => {
       Object.entries(dataset).forEach(([key, value]) => ($element.dataset[key] = value));
@@ -145,28 +145,28 @@ export function throttle(
       };
 }
 
-export const formatPrice = (price: number | string) => {
+export const formatPrice = (price: number | string): string => {
   return '€' + Number(price).toFixed(2);
 };
 
-export const replaceWith = <T extends HTMLElement>($element: T, $newElement: T) => {
+export const replaceWith = <T extends HTMLElement>($element: T, $newElement: T): T => {
   $element.replaceWith($newElement);
   return $newElement;
 };
 
-export const remove = ($element: HTMLElement | null) => {
+export const remove = ($element: HTMLElement | null): null => {
   if ($element) {
     $element.remove();
   }
   return null;
 };
 
-export const before = ($target: HTMLElement, $element: HTMLElement) => {
+export const before = ($target: HTMLElement, $element: HTMLElement): HTMLElement => {
   $target.before($element);
   return $element;
 };
 
-export const after = ($target: HTMLElement, $element: HTMLElement) => {
+export const after = ($target: HTMLElement, $element: HTMLElement): HTMLElement => {
   $target.after($element);
   return $element;
 };

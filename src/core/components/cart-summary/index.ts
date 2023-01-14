@@ -10,9 +10,9 @@ type PromoDataset = {
 };
 
 const cartSummaryClassName = 'cart-summary';
-const elementClassName = (element: string) => `${cartSummaryClassName}__${element}`;
+const elementClassName = (element: string): string => `${cartSummaryClassName}__${element}`;
 
-const promoHeading = (text: PromoCodes[string]['text'], discount: PromoCodes[string]['discount']) =>
+const promoHeading = (text: PromoCodes[string]['text'], discount: PromoCodes[string]['discount']): string =>
   `${text} - ${discount * 100}% `;
 
 class CartSummary extends Component {
@@ -47,7 +47,7 @@ class CartSummary extends Component {
   private _promoDiscount = 0;
   private _appliedPromoCodes: PromoCodesKeys = [];
 
-  get appliedPromoCodes() {
+  get appliedPromoCodes(): PromoCodesKeys {
     return this._appliedPromoCodes;
   }
 
@@ -57,7 +57,7 @@ class CartSummary extends Component {
     this.promoDiscount = this._appliedPromoCodes.reduce((total, promo) => promoCodes[promo].discount + total, 0);
   }
 
-  get promoDiscount() {
+  get promoDiscount(): number {
     return this._promoDiscount;
   }
 
@@ -78,7 +78,7 @@ class CartSummary extends Component {
     this.appliedPromoCodes = App.getAppliedPromoCodes();
   }
 
-  build() {
+  build(): DocumentFragment {
     const $fragment = document.createDocumentFragment();
     const $heading = document.createElement('h2');
     const $totalProducts = this.$totalProducts;
@@ -120,7 +120,7 @@ class CartSummary extends Component {
     return $fragment;
   }
 
-  buildTotalItem(label: string, value: string) {
+  buildTotalItem(label: string, value: string): HTMLParagraphElement {
     const $root = document.createElement('p');
     const $label = document.createElement('span');
 
@@ -133,19 +133,19 @@ class CartSummary extends Component {
     return $root;
   }
 
-  buildTotalProducts() {
+  buildTotalProducts(): HTMLParagraphElement {
     return this.buildTotalItem('Products: ', App.getOrdersTotalQuantity().toString());
   }
 
-  buildTotalPrice() {
+  buildTotalPrice(): HTMLParagraphElement {
     return this.buildTotalItem('Total: ', formatPrice(App.getOrdersTotalPrice()));
   }
 
-  buildTotalPriceWithPromo() {
+  buildTotalPriceWithPromo(): HTMLParagraphElement {
     return this.buildTotalItem('Total: ', formatPrice(App.getOrdersTotalPrice() * (1 - this._promoDiscount)));
   }
 
-  buildPromoCodeInput() {
+  buildPromoCodeInput(): HTMLInputElement {
     const $input = document.createElement('input');
 
     $input.className = CartSummary.classes.promoCodeInput;
@@ -156,7 +156,7 @@ class CartSummary extends Component {
     return $input;
   }
 
-  buildPromoCode() {
+  buildPromoCode(): HTMLDivElement {
     const $promoCode = document.createElement('div');
 
     $promoCode.className = CartSummary.classes.promoCode;
@@ -164,7 +164,7 @@ class CartSummary extends Component {
     return $promoCode;
   }
 
-  buildPromoResult(promoCode: string) {
+  buildPromoResult(promoCode: string): HTMLDivElement | null {
     const normalizedPromoCode = promoCode.toLowerCase();
 
     const $promoResult = document.createElement('div');
@@ -192,7 +192,7 @@ class CartSummary extends Component {
     return $promoResult;
   }
 
-  buildAppliedPromo() {
+  buildAppliedPromo(): HTMLDivElement | null {
     if (this.appliedPromoCodes.length === 0) {
       return null;
     }
@@ -226,11 +226,11 @@ class CartSummary extends Component {
     return $promo;
   }
 
-  refreshTotalProducts() {
+  refreshTotalProducts(): void {
     this.$totalProducts = replaceWith(this.$totalProducts, this.buildTotalProducts());
   }
 
-  refreshTotalPrice() {
+  refreshTotalPrice(): void {
     const $newTotalPrice = this.buildTotalPrice();
 
     if (this._promoDiscount > 0) {
@@ -240,7 +240,7 @@ class CartSummary extends Component {
     this.$totalPrice = replaceWith(this.$totalPrice, $newTotalPrice);
   }
 
-  refreshTotalPriceWithPromo() {
+  refreshTotalPriceWithPromo(): void {
     this.$totalPriceWithPromo = remove(this.$totalPriceWithPromo);
 
     if (this.promoDiscount === 0) {
@@ -250,7 +250,7 @@ class CartSummary extends Component {
     this.$totalPriceWithPromo = after(this.$totalPrice, this.buildTotalPriceWithPromo());
   }
 
-  refreshPromoResult(value?: string) {
+  refreshPromoResult(value?: string): void {
     const $promoResult = this.buildPromoResult(value || '');
 
     this.$promoResult = remove(this.$promoResult);
@@ -260,7 +260,7 @@ class CartSummary extends Component {
     }
   }
 
-  refreshAppliedPromo() {
+  refreshAppliedPromo(): void {
     this.$appliedPromo = remove(this.$appliedPromo);
 
     const $newAppliedPromo = this.buildAppliedPromo();
@@ -270,13 +270,13 @@ class CartSummary extends Component {
     }
   }
 
-  refreshOnOrder() {
+  refreshOnOrder(): void {
     this.refreshTotalProducts();
     this.refreshTotalPrice();
     this.refreshTotalPriceWithPromo();
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     this.refreshTotalPriceWithPromo();
     this.refreshAppliedPromo();

@@ -12,7 +12,7 @@ import ErrorPage, { ErrorTypes } from '../error/index';
 import MainPage from '../main/index';
 import ProductDetailsPage from '../product-details';
 
-const getPageId = (hash: string) => hash.split('?').shift() || PageIds.MainPage;
+const getPageId = (hash: string): string => hash.split('?').shift() || PageIds.MainPage;
 
 class App {
   private static instance: App | null = null;
@@ -31,7 +31,7 @@ class App {
   static $focused: HTMLInputElement | null = null;
   static $modal: HTMLElement | null = null;
 
-  static renderNewPage(pageId: string) {
+  static renderNewPage(pageId: string): void {
     const currentPageHTML = document.querySelector(`#${App.defaultPageId}`);
     if (currentPageHTML) {
       currentPageHTML.remove();
@@ -41,15 +41,15 @@ class App {
       pageId = PageIds.MainPage;
     }
 
-    const regExp = (id: string) => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
+    const makeRegExp = (id: string): RegExp => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
 
-    if (regExp(PageIds.MainPage).test(pageId)) {
+    if (makeRegExp(PageIds.MainPage).test(pageId)) {
       App.pageId = PageIds.MainPage;
       page = new MainPage();
-    } else if (regExp(PageIds.CartPage).test(pageId)) {
+    } else if (makeRegExp(PageIds.CartPage).test(pageId)) {
       App.pageId = PageIds.CartPage;
       page = new CartPage();
-    } else if (regExp(PageIds.ProductDetails).test(pageId)) {
+    } else if (makeRegExp(PageIds.ProductDetails).test(pageId)) {
       App.pageId = PageIds.ProductDetails;
       page = new ProductDetailsPage();
     } else {
@@ -73,8 +73,8 @@ class App {
     }
   }
 
-  private enableRouteChange() {
-    const routeChangeHandler = () => {
+  private enableRouteChange(): void {
+    const routeChangeHandler: EventListener = () => {
       if (window.location.pathname !== '/') {
         App.renderNewPage(PageIds.ErrorPage);
         return;
@@ -107,14 +107,14 @@ class App {
     this.$main = $main;
   }
 
-  static getInstance() {
+  static getInstance(): App {
     if (!App.instance) {
       App.instance = new App();
     }
     return App.instance;
   }
 
-  run() {
+  run(): void {
     App.container.append(this.$header, this.$main, this.$footer);
 
     if (window.location.pathname !== '/') {
@@ -126,48 +126,44 @@ class App {
     this.enableRouteChange();
   }
 
-  static setModal($modal: HTMLElement | null) {
+  static setModal($modal: HTMLElement | null): void {
     App.$modal?.remove();
     App.$modal = $modal;
     $modal && document.body.append($modal);
   }
 
-  static refreshHeader() {
+  static refreshHeader(): void {
     const instance = App.getInstance();
     const $newHeader = new Header().render();
     instance.$header = replaceWith(instance.$header, $newHeader);
   }
 
-  static getHistory() {
+  static getHistory(): [string, string] {
     return App.history;
   }
 
-  static getData() {
-    return App.data;
-  }
-
-  static getProducts() {
+  static getProducts(): Product[] {
     return App.data.products;
   }
 
-  static setProducts(products: Product[]) {
+  static setProducts(products: Product[]): void {
     App.data.products = products;
   }
 
-  static getOrders() {
+  static getOrders(): Orders {
     return App.orders;
   }
 
-  static setOrders(orders: Orders) {
+  static setOrders(orders: Orders): void {
     App.orders = orders;
     App.refreshHeader();
   }
 
-  static getAppliedPromoCodes() {
+  static getAppliedPromoCodes(): PromoCodesKeys {
     return App.appliedPromoCodes;
   }
 
-  static setAppliedPromoCodes(codes: PromoCodesKeys) {
+  static setAppliedPromoCodes(codes: PromoCodesKeys): void {
     App.appliedPromoCodes = codes;
   }
 
@@ -198,25 +194,25 @@ class App {
     return 0;
   }
 
-  static dropOrder(productId: string) {
+  static dropOrder(productId: string): void {
     if (App.orders[productId]) {
       delete App.orders[productId];
     }
   }
 
-  static isProductOrdered(id: Product['id']) {
+  static isProductOrdered(id: Product['id']): boolean {
     return App.orders[id] !== undefined;
   }
 
-  static getOrdersProductsQuantity() {
+  static getOrdersProductsQuantity(): number {
     return Object.keys(App.orders).length;
   }
 
-  static getOrdersTotalQuantity() {
+  static getOrdersTotalQuantity(): number {
     return Object.values(App.orders).reduce((total, { quantity }) => total + quantity, 0);
   }
 
-  static getOrdersTotalPrice() {
+  static getOrdersTotalPrice(): number {
     return Object.keys(App.orders).reduce(
       (total, id) => total + (productsMap[id].price || 0) * App.orders[id].quantity,
       0

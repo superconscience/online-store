@@ -16,7 +16,7 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
     this.fillItems();
   }
 
-  fillItems() {
+  fillItems(): void {
     const products = data.products;
     const actualProducts = App.getProducts();
     const filterType = this.filterType;
@@ -45,7 +45,7 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
     });
   }
 
-  build() {
+  build(): DocumentFragment {
     const fragment = document.createDocumentFragment();
     const list = document.createElement('ul');
     const header = document.createElement('h3');
@@ -101,7 +101,7 @@ class CheckboxedFilter extends Filter<CheckboxedFilterType> {
     return fragment;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }

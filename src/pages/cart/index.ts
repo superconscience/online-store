@@ -27,14 +27,14 @@ class CartPage extends Page {
     this.$list = this.buildList();
   }
 
-  buildCart() {
+  buildCart(): HTMLDivElement {
     const $cart = document.createElement('div');
     $cart.className = 'cart';
     $cart.append(this.buildWrapper());
     return $cart;
   }
 
-  buildWrapper() {
+  buildWrapper(): HTMLDivElement {
     const orders = App.getOrders();
     if (Object.keys(orders).length === 0) {
       const $empty = document.createElement('p');
@@ -62,7 +62,7 @@ class CartPage extends Page {
     return $wrapper;
   }
 
-  buildList() {
+  buildList(): HTMLUListElement {
     const $list = document.createElement('ul');
     const orders = App.getOrders();
     const { limit, page } = this.pageControl.getParams();
@@ -159,18 +159,18 @@ class CartPage extends Page {
     return $list;
   }
 
-  refreshList() {
+  refreshList(): void {
     this.$list = replaceWith(this.$list, this.buildList());
   }
 
-  render() {
+  render(): DocumentFragment {
     const $cart = this.buildCart();
     this.$cart = $cart;
     this.container.append($cart);
     return this.container;
   }
 
-  query() {
+  query(): void {
     this.pageControl.useQuery();
     this.refreshList();
   }

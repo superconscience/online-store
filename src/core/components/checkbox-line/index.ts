@@ -27,7 +27,7 @@ class CheckboxLine extends Component {
     this.available = available;
   }
 
-  build() {
+  build(): DocumentFragment {
     const query = queryHelper();
     const fragment = document.createDocumentFragment();
     const checkbox = document.createElement('input');
@@ -46,7 +46,7 @@ class CheckboxLine extends Component {
     return fragment;
   }
 
-  render() {
+  render(): HTMLElement {
     this.container.append(this.build());
     return this.container;
   }
