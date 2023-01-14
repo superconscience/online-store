@@ -1,7 +1,7 @@
-import Component from '../../templates/components';
 import App from '../../../pages/app/index';
-import { formatPrice } from '../../../utils/functions';
 import { PageIds } from '../../../utils/constants';
+import { formatPrice } from '../../../utils/functions';
+import Component from '../../templates/components';
 
 class Header extends Component {
   constructor() {

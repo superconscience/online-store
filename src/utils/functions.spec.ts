@@ -1,4 +1,6 @@
 import 'jest';
+import moment from 'moment';
+import { rnd } from '../test/utils';
 import {
   datasetHelper,
   debounce,
@@ -11,8 +13,6 @@ import {
   validatePhone,
   validatePhoneInput,
 } from './functions';
-import moment from 'moment';
-import { rnd } from '../test/utils';
 
 jest.useFakeTimers();
 

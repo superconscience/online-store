@@ -1,4 +1,9 @@
+import americanExpressLogo from '../../../assets/img/american-express-logo.svg';
+import cardPlaceholder from '../../../assets/img/card-placeholder.jpg';
+import masterCardLogo from '../../../assets/img/master-card-logo.svg';
+import visaLogo from '../../../assets/img/visa-logo.png';
 import App from '../../../pages/app';
+import { PageIds } from '../../../utils/constants';
 import {
   datasetHelper,
   validateCardDate,
@@ -9,11 +14,6 @@ import {
   validatePhoneInput,
 } from '../../../utils/functions';
 import Component from '../../templates/components';
-import americanExpressLogo from '../../../assets/img/american-express-logo.svg';
-import visaLogo from '../../../assets/img/visa-logo.png';
-import masterCardLogo from '../../../assets/img/master-card-logo.svg';
-import cardPlaceholder from '../../../assets/img/card-placeholder.jpg';
-import { PageIds } from '../../../utils/constants';
 
 enum FormField {
   Name = 'name',

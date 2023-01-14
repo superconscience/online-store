@@ -1,10 +1,9 @@
 import App from '../../../pages/app';
 import { Product } from '../../../types';
-import { datasetHelper, replaceWith } from '../../../utils/functions';
-import Component from '../../templates/components';
-import { formatPrice } from '../../../utils/functions';
-import ModalItem from '../modal';
 import { PageIds } from '../../../utils/constants';
+import { datasetHelper, formatPrice, replaceWith } from '../../../utils/functions';
+import Component from '../../templates/components';
+import ModalItem from '../modal';
 
 type ImageDataset = { index: string };
 
