@@ -1,6 +1,5 @@
 abstract class Page {
   protected container: DocumentFragment;
-  static TextObject = {};
 
   constructor() {
     this.container = document.createDocumentFragment();
