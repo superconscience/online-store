@@ -27,17 +27,15 @@ class CheckboxFilter extends Filter<CheckboxFilterType> {
       if (p[filterType] !== undefined) {
         filterValue = p[filterType];
       }
-      if (filterValue === undefined) {
-        return true;
-      }
+      if (filterValue !== undefined) {
+        filterValue = filterValue.toLowerCase();
 
-      filterValue = filterValue.toLowerCase();
-
-      if (this.items[filterValue] === undefined) {
-        this.items[filterValue] = { total: 1, actual: 0 };
-        return true;
+        if (this.items[filterValue] === undefined) {
+          this.items[filterValue] = { total: 1, actual: 0 };
+        } else {
+          this.items[filterValue].total += 1;
+        }
       }
-      this.items[filterValue].total += 1;
     });
 
     actualProducts.forEach((p) => {
