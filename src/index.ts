@@ -1,4 +1,3 @@
-import './index.css';
 import App from './pages/app/index';
 import { logAssessment } from './utils/assessment';
 import { LSKeys } from './utils/constants';
