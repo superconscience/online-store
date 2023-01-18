@@ -1,0 +1,32 @@
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+}
+
+export type ProductsMap = {
+  [k: string]: Product;
+};
+
+export interface Order {
+  quantity: number;
+}
+
+export type Orders = Record<string, Order>;
+
+export type PromoCodes = Record<string, { discount: number; text: string }>;
+
+export type PromoCodesKeys = (keyof PromoCodes)[];
+
+export type LocationHistory = {
+  prev: string;
+  current: string;
+};

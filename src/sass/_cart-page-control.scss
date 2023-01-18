@@ -1,0 +1,45 @@
+$cart-page-control: cart-page-control;
+
+.#{$cart-page-control} {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: uppercase;
+}
+
+.#{$cart-page-control}__limit {
+  color: wheat;
+}
+
+.#{$cart-page-control}__limit-input {
+  text-align: center;
+  outline: none;
+  border: 1px solid orange;
+  border-radius: 0.2rem;
+  background-color: #373636;
+  font-size: 140%;
+}
+
+.#{$cart-page-control}__numbers {
+  margin-left: 2rem;
+  color: wheat;
+}
+
+.#{$cart-page-control}__numbers-button {
+  background-color: #373636;
+  cursor: pointer;
+  border: 1px solid orange;
+  border-radius: 0.2rem;
+  padding: 0.1rem;
+  font-size: 140%;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.#{$cart-page-control}__numbers-indicator {
+  font-size: 140%;
+  margin: 0 0.5rem;
+}

@@ -1,0 +1,26 @@
+import { Product } from '../../types';
+import Component from './components';
+
+type ProductKey = keyof Product;
+
+export type FilterType = CheckboxFilterType | RangedFilterType;
+export type CheckboxFilterType = Extract<ProductKey, 'category' | 'brand'>;
+export type RangedFilterType = Extract<ProductKey, 'price' | 'stock'>;
+
+export type CheckboxItems = Record<string, { total: number; actual: number }>;
+export type RangedItems = { defaultMin: number; defaultMax: number; min: number; max: number };
+
+abstract class Filter<T extends FilterType> extends Component {
+  protected readonly filterType: T;
+  protected readonly filterName: string;
+
+  constructor(filterType: T, tagName = 'div', className = '') {
+    super(tagName, className);
+    this.filterType = filterType;
+    this.filterName = filterType.slice(0, 1).toUpperCase() + filterType.slice(1).toLowerCase();
+  }
+
+  abstract fillItems(): void;
+}
+
+export default Filter;
