@@ -45,7 +45,7 @@ class MainPage extends Page {
   }
 
   refreshOnQuery(): void {
-    const [prevHref, currentHref] = App.getHistory();
+    const { prev: prevHref, current: currentHref } = App.getLocationHistory();
 
     const prevQuery = queryHelper(prevHref);
     const currentQuery = queryHelper(currentHref);

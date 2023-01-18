@@ -4,7 +4,7 @@ import SearchBar from '../../core/components/search-bar';
 import Page from '../../core/templates/page';
 import { data } from '../../data';
 import { productsMap } from '../../products-map';
-import { Orders, Product, PromoCodesKeys } from '../../types';
+import { LocationHistory, Orders, Product, PromoCodesKeys } from '../../types';
 import { PageIds } from '../../utils/constants';
 import { queryHelper, replaceWith } from '../../utils/functions';
 import CartPage from '../cart';
@@ -21,7 +21,11 @@ class App {
   private static data = { ...data };
   private static orders: Orders = {};
   private static appliedPromoCodes: PromoCodesKeys = [];
-  private static history: [string, string] = [window.location.href, window.location.href];
+
+  private static locationHistory: LocationHistory = {
+    prev: window.location.href,
+    current: window.location.href,
+  };
 
   static pageId: PageIds;
   static page: Page;
@@ -41,15 +45,21 @@ class App {
       pageId = PageIds.MainPage;
     }
 
-    const makeRegExp = (id: string): RegExp => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
+    /*
+      const mainPageRegExp = makePageIdRegExp('main-page')
+      mainPageRegExp.test('/main-page') => true
+      mainPageRegExp.test('/main-page?category=smartphones') => true
+      mainPageRegExp.test('/main-pages') => false
+    */
+    const makePageIdRegExp = (id: string): RegExp => new RegExp(`(^${id}$)|(^${id}(\\?|\\/).*$)`);
 
-    if (makeRegExp(PageIds.MainPage).test(pageId)) {
+    if (makePageIdRegExp(PageIds.MainPage).test(pageId)) {
       App.pageId = PageIds.MainPage;
       page = new MainPage();
-    } else if (makeRegExp(PageIds.CartPage).test(pageId)) {
+    } else if (makePageIdRegExp(PageIds.CartPage).test(pageId)) {
       App.pageId = PageIds.CartPage;
       page = new CartPage();
-    } else if (makeRegExp(PageIds.ProductDetails).test(pageId)) {
+    } else if (makePageIdRegExp(PageIds.ProductDetails).test(pageId)) {
       App.pageId = PageIds.ProductDetails;
       page = new ProductDetailsPage();
     } else {
@@ -81,7 +91,7 @@ class App {
       }
       const hash = window.location.hash.slice(1);
       const query = queryHelper();
-      App.history = [App.history.pop() as string, window.location.href];
+      App.updateLocationHistory(window.location.href);
 
       if (App.pageId !== getPageId(hash) || [...query.entries()].length === 0) {
         App.renderNewPage(hash);
@@ -138,8 +148,15 @@ class App {
     instance.$header = replaceWith(instance.$header, $newHeader);
   }
 
-  static getHistory(): [string, string] {
-    return App.history;
+  static getLocationHistory(): LocationHistory {
+    return App.locationHistory;
+  }
+
+  static updateLocationHistory(href: string): void {
+    App.locationHistory = {
+      prev: App.locationHistory.current,
+      current: href,
+    };
   }
 
   static getProducts(): Product[] {
@@ -180,7 +197,6 @@ class App {
       App.setOrders({ ...orders, [productId]: { quantity: stock >= 1 ? 1 : 0 } });
       return 1;
     }
-    return 0;
   }
 
   static decreaseOrder(productId: string): number {

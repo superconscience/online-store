@@ -31,6 +31,20 @@ enum CardInitials {
   MasterCard = '5',
 }
 
+type FormFieldsValidationProps = {
+  formValidationFuncs: FormValidationFunc[];
+  onFormValidationFailCallbacks: (PersonalValidateFailFunc | CardValidateFailFunc)[];
+  onInputCallback?: EventListener;
+  filterFunc: FilterFunc;
+  errorMessages: string[];
+};
+
+type FormValidationFunc = (...args: string[]) => boolean;
+
+type FormFieldsValidationConfig = Record<FormField, FormFieldsValidationProps>;
+
+type FilterFunc = (input: string) => boolean;
+
 type CardInputName = FormField.CardNumber | FormField.CardDate | FormField.CardCvv;
 
 type CardErrorMessageDataset = {
@@ -43,13 +57,19 @@ type PersonalValidateFailFunc = (
   errorMessage: string
 ) => void;
 
-type CardValidateFailFunc = (
-  $input: HTMLInputElement,
-  $errorContainer: HTMLElement,
-  errorFactory: (errorMessage: string, name: CardErrorMessageDataset['name']) => HTMLElement,
-  errorMessage: string,
-  name: CardErrorMessageDataset['name']
-) => void;
+type CardValidationFuncProps = {
+  $input: HTMLInputElement;
+  $errorContainer: HTMLElement;
+  errorFactory: (errorMessage: string, name: CardErrorMessageDataset['name']) => HTMLElement;
+  errorMessage: string;
+  name: CardErrorMessageDataset['name'];
+};
+
+type CardValidateFailFunc = (props: CardValidationFuncProps) => void;
+
+const isHTMLInputWithValue = ($target: EventTarget | null): $target is HTMLInputElement => {
+  return $target instanceof HTMLInputElement && $target.value !== '';
+};
 
 const isCardValidateFailFunc = (
   func: PersonalValidateFailFunc | CardValidateFailFunc,
@@ -71,10 +91,10 @@ const onPersonalValidationFail: PersonalValidateFailFunc = ($element, errorFacto
   $element.setCustomValidity(errorMessage);
 };
 
-const onCardValidationFail: CardValidateFailFunc = ($element, $errorContainer, errorFactory, errorMessage, name) => {
+const onCardValidationFail: CardValidateFailFunc = ({ $input, $errorContainer, errorFactory, errorMessage, name }) => {
   const $error = errorFactory(errorMessage, name);
   $errorContainer.append($error);
-  $element.setCustomValidity(errorMessage);
+  $input.setCustomValidity(errorMessage);
 };
 
 const inputFilter = (input: string): boolean => /\w/.test(input) || input === '';
@@ -98,54 +118,39 @@ const clipInput = ($target: HTMLInputElement, limit: number): string => {
   return value;
 };
 
-const validation: Record<
-  FormField,
-  {
-    formValidateFunc: ((...args: string[]) => boolean) | ((...args: string[]) => boolean)[];
-    onFormValidationFail:
-      | PersonalValidateFailFunc
-      | CardValidateFailFunc
-      | (PersonalValidateFailFunc | CardValidateFailFunc)[];
-    onInputCallback?: (event: Event) => void;
-    filterFunc: (input: string) => boolean;
-    errorMessage: string | string[];
-  }
-> = {
+const formFieldsValidationCofig: FormFieldsValidationConfig = {
   name: {
-    formValidateFunc: validateName,
-    onFormValidationFail: onPersonalValidationFail,
+    formValidationFuncs: [validateName],
+    onFormValidationFailCallbacks: [onPersonalValidationFail],
     filterFunc: inputFilter,
-    errorMessage: `${errorSpanHtml('Name')} must contain at least 2 words with at least 3 symbols each`,
+    errorMessages: [`${errorSpanHtml('Name')} must contain at least 2 words with at least 3 symbols each`],
   },
   phone: {
-    formValidateFunc: validatePhone,
-    onFormValidationFail: onPersonalValidationFail,
+    formValidationFuncs: [validatePhone],
+    onFormValidationFailCallbacks: [onPersonalValidationFail],
     filterFunc: validatePhoneInput,
-    errorMessage: `${errorSpanHtml('Phone number')} must start with "+" and have at least 9 number symbols`,
+    errorMessages: [`${errorSpanHtml('Phone number')} must start with "+" and have at least 9 number symbols`],
   },
   address: {
-    formValidateFunc: validateDeliveryAddress,
-    onFormValidationFail: onPersonalValidationFail,
+    formValidationFuncs: [validateDeliveryAddress],
+    onFormValidationFailCallbacks: [onPersonalValidationFail],
     filterFunc: inputFilter,
-    errorMessage: `${errorSpanHtml('Delivery address')} must contain at least 3 words with at least 5 symbols each`,
+    errorMessages: [`${errorSpanHtml('Delivery address')} must contain at least 3 words with at least 5 symbols each`],
   },
   email: {
-    formValidateFunc: validateEmail,
-    onFormValidationFail: onPersonalValidationFail,
+    formValidationFuncs: [validateEmail],
+    onFormValidationFailCallbacks: [onPersonalValidationFail],
     filterFunc: inputFilter,
-    errorMessage: `${errorSpanHtml('E-mail')} is not valid`,
+    errorMessages: [`${errorSpanHtml('E-mail')} is not valid`],
   },
   cardnumber: {
-    formValidateFunc: (input: string): boolean => /^\d{16,16}$/.test(input),
-    onFormValidationFail: onCardValidationFail,
-    errorMessage: `${errorSpanHtml('Card number')} must contain 16 digits`,
+    formValidationFuncs: [(input: string): boolean => /^\d{16,16}$/.test(input)], // Must contain 16 digits
+    onFormValidationFailCallbacks: [onCardValidationFail],
+    errorMessages: [`${errorSpanHtml('Card number')} must contain 16 digits`],
     filterFunc: onlyNumbersFilter,
     onInputCallback: (event) => {
       const $target = event.target;
-      if (!($target instanceof HTMLInputElement)) {
-        return;
-      }
-      if (!$target.value) {
+      if (!isHTMLInputWithValue($target)) {
         return;
       }
       if (!onlyNumbersFilter($target.value)) {
@@ -180,9 +185,9 @@ const validation: Record<
     },
   },
   carddate: {
-    formValidateFunc: [validateCardDate, cardDateFilter],
-    onFormValidationFail: [onCardValidationFail, onCardValidationFail],
-    errorMessage: [
+    formValidationFuncs: [validateCardDate, cardDateFilter],
+    onFormValidationFailCallbacks: [onCardValidationFail, onCardValidationFail],
+    errorMessages: [
       `${errorSpanHtml('Card thru')} must contain a valid date (MM/YY)`,
       `${errorSpanHtml('Card thru')} must contain only integers`,
     ],
@@ -192,10 +197,7 @@ const validation: Record<
         return;
       }
       const $target = event.target;
-      if (!($target instanceof HTMLInputElement)) {
-        return;
-      }
-      if (!$target.value) {
+      if (!isHTMLInputWithValue($target)) {
         return;
       }
       const value = $target.value;
@@ -227,16 +229,13 @@ const validation: Record<
     },
   },
   cardcvv: {
-    formValidateFunc: (input: string): boolean => /^\d{3,3}$/.test(input),
-    onFormValidationFail: onCardValidationFail,
-    errorMessage: `${errorSpanHtml('Card CVV')} must contain only 3 digits`,
+    formValidationFuncs: [(input: string): boolean => /^\d{3,3}$/.test(input)], // Must contain 3 digits
+    onFormValidationFailCallbacks: [onCardValidationFail],
+    errorMessages: [`${errorSpanHtml('Card CVV')} must contain only 3 digits`],
     filterFunc: onlyNumbersFilter,
     onInputCallback: (event) => {
       const $target = event.target;
-      if (!($target instanceof HTMLInputElement)) {
-        return;
-      }
-      if (!$target.value) {
+      if (!isHTMLInputWithValue($target)) {
         return;
       }
       if (!onlyNumbersFilter($target.value)) {
@@ -355,7 +354,7 @@ class ModalItem extends Component {
 
     $form.noValidate = true;
 
-    Object.entries(validation).forEach(([name, { filterFunc, onInputCallback }]) => {
+    Object.entries(formFieldsValidationCofig).forEach(([name, { filterFunc, onInputCallback }]) => {
       const dataset = datasetHelper();
       const $element = $form.elements.namedItem(name);
       if (!($element instanceof HTMLInputElement)) {
@@ -386,61 +385,39 @@ class ModalItem extends Component {
       const $form = event.target;
       $errorContainer.innerHTML = '';
 
-      Object.entries(validation).forEach(([name, { formValidateFunc, onFormValidationFail, errorMessage }]) => {
-        const $element = $form.elements.namedItem(name);
-        if (!($element instanceof HTMLInputElement)) {
-          return;
-        }
-        if (Array.isArray(formValidateFunc)) {
-          if (!Array.isArray(onFormValidationFail)) {
-            throw new Error(`Property onFormValidationFail must be an array`);
+      Object.entries(formFieldsValidationCofig).forEach(
+        ([
+          name,
+          {
+            formValidationFuncs: formValidateFunc,
+            onFormValidationFailCallbacks: onFormValidationFail,
+            errorMessages: errorMessage,
+          },
+        ]) => {
+          const $input = $form.elements.namedItem(name);
+          if (!($input instanceof HTMLInputElement)) {
+            return;
           }
-          if (!Array.isArray(errorMessage)) {
-            throw new Error(`Property errorMessage must be an array`);
-          }
-
           formValidateFunc.forEach((func, i) => {
-            if (!func($element.value)) {
+            if (!func($input.value)) {
               const validateFailFunc = onFormValidationFail[i];
-              $element.classList.add(ModalItem.classes.inputError);
-              $element.dataset.oldValue = $element.value;
+              $input.classList.add(ModalItem.classes.inputError);
+              $input.dataset.oldValue = $input.value;
 
               isCardValidateFailFunc(validateFailFunc, name as FormField)
                 ? isCardInputName(name) &&
-                  validateFailFunc(
-                    $element,
+                  validateFailFunc({
+                    $input,
                     $errorContainer,
-                    (message, name) => this.buildCardErrorMessage(message, name),
-                    errorMessage[i],
-                    name
-                  )
-                : validateFailFunc($element, (message) => this.buildErrorMessage(message), errorMessage[i]);
+                    errorFactory: (message, name) => this.buildCardErrorMessage(message, name),
+                    errorMessage: errorMessage[i],
+                    name,
+                  })
+                : validateFailFunc($input, (message) => this.buildErrorMessage(message), errorMessage[i]);
             }
           });
-        } else {
-          if (Array.isArray(onFormValidationFail)) {
-            throw new Error(`Property onFormValidationFail must be an array`);
-          }
-          if (Array.isArray(errorMessage)) {
-            throw new Error(`Property errorMessage must be an array`);
-          }
-          if (!formValidateFunc($element.value)) {
-            $element.classList.add(ModalItem.classes.inputError);
-            $element.dataset.oldValue = $element.value;
-
-            isCardValidateFailFunc(onFormValidationFail, name as FormField)
-              ? isCardInputName(name) &&
-                onFormValidationFail(
-                  $element,
-                  $errorContainer,
-                  (message, name) => this.buildCardErrorMessage(message, name),
-                  errorMessage,
-                  name
-                )
-              : onFormValidationFail($element, (message) => this.buildErrorMessage(message), errorMessage);
-          }
         }
-      });
+      );
 
       if (!$form.checkValidity()) {
         return;

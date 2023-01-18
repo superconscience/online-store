@@ -3,19 +3,18 @@ import { queryHelper } from '../../../utils/functions';
 import Component from '../../templates/components';
 import { CheckboxFilterType } from '../../templates/filter';
 
-const checkBoxLineClassName = 'checkbox-line';
-
 class CheckboxLine extends Component {
+  private static readonly cssClassName = 'checkbox-line';
   readonly filterType: CheckboxFilterType;
   readonly title: string;
   readonly filterName: string;
   readonly total: number;
   readonly available: number;
   static readonly classes = {
-    checkboxLine: checkBoxLineClassName,
-    input: `${checkBoxLineClassName}__input`,
-    label: `${checkBoxLineClassName}__label`,
-    info: `${checkBoxLineClassName}__info`,
+    checkboxLine: CheckboxLine.cssClassName,
+    input: `${CheckboxLine.cssClassName}__input`,
+    label: `${CheckboxLine.cssClassName}__label`,
+    info: `${CheckboxLine.cssClassName}__info`,
   };
 
   constructor(filterType: CheckboxFilterType, filterName: string, total: number, available = total) {

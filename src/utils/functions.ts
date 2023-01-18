@@ -204,11 +204,11 @@ export const validateDeliveryAddress = (address: string): boolean => {
 };
 
 export const validatePhone = (phone: string): boolean => {
-  return /^\+[0-9]{9,}$/.test(phone);
+  return /^\+[0-9]{9,}$/.test(phone); // Must start with "+" and have at least 9 number symbols
 };
 
 export const validatePhoneInput = (input: string): boolean => {
-  const regExp = /[+0-9]/;
+  const regExp = /[+0-9]/; // Must contain only digits
   return input.length > 1 ? input.split('').every((x) => regExp.test(x)) : regExp.test(input);
 };
 

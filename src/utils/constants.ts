@@ -24,3 +24,5 @@ export enum LSKeys {
   Orders = `RS-online-store:orders`,
   Promo = `RS-online-store:promo`,
 }
+
+export const SEARCH_INPUT_DELAY = 500;

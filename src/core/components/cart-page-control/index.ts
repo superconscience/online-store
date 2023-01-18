@@ -35,7 +35,7 @@ class CartPageControl extends Component {
     ...defaultParams,
     limit: Math.min(App.getOrdersProductsQuantity(), Number(defaultParams.limit)).toString(),
   };
-  private _pages = 0;
+  pages = 0;
 
   private get params(): CartQueryParams {
     return this._params;
@@ -49,14 +49,6 @@ class CartPageControl extends Component {
 
   getParams(): CartQueryParams {
     return this.params;
-  }
-
-  get pages(): number {
-    return this._pages;
-  }
-
-  set pages(value: number) {
-    this._pages = value;
   }
 
   constructor() {

@@ -1,5 +1,5 @@
 import App from '../../../pages/app';
-import { PageIds } from '../../../utils/constants';
+import { PageIds, SEARCH_INPUT_DELAY } from '../../../utils/constants';
 import { queryHelper, replaceWith } from '../../../utils/functions';
 import Component from '../../templates/components';
 import CheckboxFilter from '../checkbox-filter';
@@ -60,13 +60,13 @@ class Sidebar extends Component {
       $copyLinkButton.textContent = 'Copied !';
       setTimeout(() => {
         $copyLinkButton.textContent = copyLinkText;
-      }, 500);
+      }, SEARCH_INPUT_DELAY);
     });
     return $filters;
   }
 
   refresh(): void {
-    const [prevHref, currentHref] = App.getHistory();
+    const { prev: prevHref, current: currentHref } = App.getLocationHistory();
 
     const prevQuery = queryHelper(prevHref);
     const currentQuery = queryHelper(currentHref);
